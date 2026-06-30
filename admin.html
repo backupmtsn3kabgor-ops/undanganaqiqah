@@ -1,137 +1,341 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Admin generator undangan aqiqah" />
-  <title>Admin Generator - Undangan Aqiqah</title>
-  <link rel="stylesheet" href="assets/css/styles.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin · Generator Undangan Aqiqah</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#2A1F3D; --cream:#FFF8EC; --cream-2:#FFEFD6;
+    --coral:#FF6B5B; --turquoise:#1FC2BD; --sunshine:#FFC93C; --magenta:#FF4FA0; --violet:#7B5CFA;
+    --line:rgba(42,31,61,.14);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--cream); color:var(--ink); font-family:'Jost',sans-serif; padding-bottom:60px;}
+  h1,h2{font-family:'Baloo 2',sans-serif; font-weight:700;}
+  .wrap{max-width:640px; margin:0 auto; padding:0 6%;}
+
+  header{padding:36px 6% 24px; text-align:center; border-bottom:3px solid var(--sunshine);}
+  header h1{font-size:28px; margin:0; color:var(--coral);}
+  header p{font-size:12px; color:var(--violet); opacity:.85; margin-top:6px; font-weight:500;}
+
+  .card{background:#fff; border:1px solid var(--line); border-radius:18px; padding:24px 22px; margin-top:24px; box-shadow:0 6px 20px -10px rgba(42,31,61,.12);}
+  .card h2{font-size:18px; margin:0 0 16px; color:var(--violet);}
+  label{display:block; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--turquoise); margin:14px 0 6px; font-weight:600;}
+  label:first-of-type{margin-top:0;}
+  input[type=text], input[type=datetime-local], input[type=url], textarea{
+    width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:10px;
+    font-family:'Jost',sans-serif; font-size:14px; background:var(--cream); color:var(--ink);
+  }
+  textarea{resize:vertical; min-height:90px;}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  @media (max-width:520px){ .row2{grid-template-columns:1fr;} }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    border:none; border-radius:999px; padding:13px 24px; font-size:13px;
+    letter-spacing:.06em; text-transform:uppercase; cursor:pointer; min-height:44px; font-weight:600;
+  }
+  .btn-primary{background:linear-gradient(135deg, var(--coral), var(--magenta)); color:#fff; width:100%; margin-top:22px; box-shadow:0 10px 24px -10px rgba(255,79,160,.55);}
+  .btn-secondary{background:var(--cream-2); color:var(--violet); border:1px solid var(--line);}
+  .btn-small{padding:8px 14px; font-size:11px; min-height:36px;}
+  .btn-turq{background:var(--turquoise); color:#fff;}
+
+  .save-status{font-size:12px; color:var(--turquoise); margin-top:10px; text-align:center; opacity:0; transition:opacity .3s; font-weight:600;}
+  .save-status.show{opacity:1;}
+
+  table{width:100%; border-collapse:collapse; margin-top:6px;}
+  th{font-size:10px; letter-spacing:.08em; text-transform:uppercase; text-align:left; color:var(--violet); opacity:.8; padding:8px 6px; border-bottom:1px solid var(--line);}
+  td{padding:10px 6px; border-bottom:1px solid var(--line); font-size:13px; vertical-align:middle;}
+  td.link-cell{font-size:11px; color:var(--turquoise); word-break:break-all;}
+  .empty-row td{text-align:center; opacity:.5; font-style:italic; padding:20px 0;}
+
+  .preview-link{display:block; text-align:center; margin-top:18px; font-size:13px; color:var(--magenta); text-decoration:underline; font-weight:600;}
+
+  .file-row{display:flex; align-items:center; gap:10px; margin-top:6px;}
+  .file-row input[type=file]{flex:1; font-size:12px;}
+  .file-status{font-size:11px; color:var(--turquoise); margin-top:6px; font-weight:500;}
+  .file-preview-img{width:64px; height:64px; border-radius:50%; object-fit:cover; border:2px solid var(--sunshine); margin-top:10px;}
+  .clear-btn{background:none; border:1px solid var(--line); border-radius:999px; padding:6px 12px; font-size:11px; color:var(--coral); cursor:pointer; min-height:32px;}
+  .hint{font-size:11px; color:var(--ink); opacity:.55; margin-top:6px;}
+
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--violet); color:#fff; padding:10px 20px; border-radius:999px;
+    font-size:12px; opacity:0; pointer-events:none; transition:all .25s ease; font-weight:500;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
 </head>
-<body class="admin-body">
-  <main class="admin-layout">
-    <header class="admin-header">
-      <p class="eyebrow">Static Configurator</p>
-      <h1>Admin Generator Undangan Aqiqah</h1>
-      <p>Isi data acara, unduh <code>config.json</code>, lalu letakkan file tersebut di folder utama sebelum deploy.</p>
-    </header>
+<body>
 
-    <form id="configForm" class="admin-grid">
-      <section class="admin-panel">
-        <h2>Data Anak</h2>
-        <label>Nama lengkap anak
-          <input name="childFullName" type="text" required />
-        </label>
-        <label>Nama panggilan
-          <input name="childNickname" type="text" required />
-        </label>
-        <label>Keterangan kelahiran / kalimat pendek
-          <textarea name="birthInfo" rows="3"></textarea>
-        </label>
-      </section>
+<header>
+  <h1>Generator Undangan</h1>
+  <p>Atur data acara &amp; bagikan tautan ke tamu</p>
+</header>
 
-      <section class="admin-panel">
-        <h2>Orang Tua</h2>
-        <label>Nama ayah
-          <input name="father" type="text" required />
-        </label>
-        <label>Nama ibu
-          <input name="mother" type="text" required />
-        </label>
-      </section>
+<div class="wrap">
 
-      <section class="admin-panel">
-        <h2>Detail Acara</h2>
-        <label>Tanggal & waktu acara
-          <input name="dateTimeLocal" type="datetime-local" required />
-        </label>
-        <label>Offset zona waktu
-          <select name="timezoneOffset">
-            <option value="+07:00">WIB (+07:00)</option>
-            <option value="+08:00" selected>WITA / Singapore (+08:00)</option>
-            <option value="+09:00">WIT (+09:00)</option>
-          </select>
-        </label>
-        <label>Label zona waktu
-          <input name="timezoneLabel" type="text" value="WITA" />
-        </label>
-        <label>Teks hari/tanggal
-          <input name="dateText" type="text" placeholder="Contoh: Kamis, 2 Juli 2026" />
-        </label>
-        <label>Teks waktu
-          <input name="timeText" type="text" placeholder="Contoh: 17.00 WITA - selesai" />
-        </label>
-        <label>Nama tempat
-          <input name="locationName" type="text" required />
-        </label>
-        <label>Alamat lengkap
-          <textarea name="address" rows="3" required></textarea>
-        </label>
-        <label>Link Google Maps
-          <input name="mapsUrl" type="url" placeholder="https://maps.google.com/..." />
-        </label>
-        <label>Link embed Google Maps, opsional
-          <input name="mapsEmbedUrl" type="url" placeholder="https://www.google.com/maps/embed?..." />
-        </label>
-      </section>
+  <!-- EVENT CONFIG -->
+  <div class="card">
+    <h2>Data Acara</h2>
 
-      <section class="admin-panel">
-        <h2>Media & Tema</h2>
-        <label>URL musik MP3, opsional
-          <input name="audioUrl" type="url" placeholder="assets/music.mp3 atau https://.../music.mp3" />
-        </label>
-        <label>Warna utama
-          <input name="primaryColor" type="color" value="#8b6f47" />
-        </label>
-        <label>Warna sekunder
-          <input name="secondaryColor" type="color" value="#f2e6d0" />
-        </label>
-        <label>Warna latar
-          <input name="backgroundColor" type="color" value="#fffaf2" />
-        </label>
-      </section>
+    <label>Nama Lengkap Anak</label>
+    <input type="text" id="childName" placeholder="Muhammad Arkan">
 
-      <section class="admin-panel admin-panel-wide">
-        <h2>Pesan Undangan</h2>
-        <label>Kalimat pembuka
-          <textarea name="opening" rows="3"></textarea>
-        </label>
-        <label>Doa
-          <textarea name="prayer" rows="3"></textarea>
-        </label>
-        <label>Kalimat penutup
-          <textarea name="closing" rows="3"></textarea>
-        </label>
-      </section>
+    <label>Nama Panggilan</label>
+    <input type="text" id="childNickname" placeholder="Arkan">
 
-      <section class="admin-panel admin-panel-wide">
-        <h2>Daftar Tamu & Link</h2>
-        <label>Base URL undangan
-          <input name="baseUrl" type="url" />
-        </label>
-        <label>Daftar nama tamu, pisahkan dengan enter atau koma
-          <textarea name="guestList" rows="6" placeholder="Budi Santoso&#10;Ibu Rina&#10;Keluarga Besar Andi"></textarea>
-        </label>
-        <div class="admin-actions">
-          <button type="button" id="generateLinks" class="secondary-button">Generate Link Tamu</button>
-          <button type="button" id="copyAllLinks" class="secondary-button">Copy Semua Link</button>
-        </div>
-        <div id="guestLinks" class="guest-links" aria-live="polite"></div>
-      </section>
+    <div class="row2">
+      <div>
+        <label>Nama Ayah</label>
+        <input type="text" id="fatherName" placeholder="Ahmad Fauzi">
+      </div>
+      <div>
+        <label>Nama Ibu</label>
+        <input type="text" id="motherName" placeholder="Siti Nurhaliza">
+      </div>
+    </div>
 
-      <section class="admin-panel admin-panel-wide">
-        <h2>Output Config</h2>
-        <div class="admin-actions">
-          <button type="button" id="downloadConfig" class="primary-button">Download config.json</button>
-          <button type="button" id="saveDraft" class="secondary-button">Simpan Draft Browser</button>
-          <button type="button" id="loadDraft" class="secondary-button">Muat Draft</button>
-          <button type="button" id="openPreview" class="secondary-button">Preview Undangan</button>
-        </div>
-        <p id="adminStatus" class="status-text" role="status"></p>
-        <pre id="jsonPreview" class="json-preview"></pre>
-      </section>
-    </form>
-  </main>
+    <label>Tanggal &amp; Waktu Acara</label>
+    <input type="datetime-local" id="eventDate">
 
-  <script src="assets/js/admin.js"></script>
+    <label>Nama Lokasi</label>
+    <input type="text" id="locationName" placeholder="Kediaman Keluarga">
+
+    <label>Alamat Lengkap</label>
+    <textarea id="locationAddress" placeholder="Jl. Melati No. 12, Jakarta Selatan"></textarea>
+
+    <label>Link Google Maps</label>
+    <input type="url" id="mapsUrl" placeholder="https://maps.google.com/...">
+  </div>
+
+  <!-- MEDIA UPLOAD -->
+  <div class="card">
+    <h2>Foto &amp; Musik</h2>
+
+    <label>Foto Anak</label>
+    <div class="file-row">
+      <input type="file" id="photoFile" accept="image/*">
+      <button class="btn clear-btn" id="clearPhoto" type="button">Hapus</button>
+    </div>
+    <div id="photoPreviewWrap"></div>
+    <div class="hint">Unggah foto dari perangkat Anda. Disimpan langsung di browser ini.</div>
+
+    <label style="margin-top:24px;">Musik Latar</label>
+    <div class="file-row">
+      <input type="file" id="audioFile" accept="audio/*">
+      <button class="btn clear-btn" id="clearAudio" type="button">Hapus</button>
+    </div>
+    <div class="file-status" id="audioStatus">Belum ada file musik</div>
+    <audio id="audioPreviewPlayer" controls style="width:100%; margin-top:10px; display:none;"></audio>
+    <div class="hint">Unggah file .mp3 dari perangkat Anda. File besar (&gt;5MB) bisa gagal tersimpan di browser ini — kompres dulu jika perlu.</div>
+  </div>
+
+  <!-- GUEST LIST -->
+  <div class="card">
+    <h2>Daftar Tamu</h2>
+    <label>Nama Tamu (satu nama per baris, atau pisahkan dengan koma)</label>
+    <textarea id="guestList" placeholder="Budi Santoso&#10;Siti Aminah&#10;Keluarga Bapak Hartono" style="min-height:120px;"></textarea>
+
+    <label>Alamat Website Undangan (base URL)</label>
+    <input type="text" id="baseUrl" placeholder="https://undangan-anda.com">
+
+    <button class="btn btn-turq" id="generateLinksBtn" style="margin-top:18px;">Buat Tautan Tamu</button>
+
+    <table id="linksTable">
+      <thead><tr><th>Nama Tamu</th><th>Tautan</th><th></th></tr></thead>
+      <tbody id="linksBody">
+        <tr class="empty-row"><td colspan="3">Belum ada tautan dibuat</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <button class="btn btn-primary" id="saveBtn">Simpan Konfigurasi</button>
+  <div class="save-status" id="saveStatus">Konfigurasi tersimpan di browser ini</div>
+
+  <div class="card">
+    <h2>Unduh / Pratinjau</h2>
+    <p style="font-size:12px; opacity:.7; margin-top:-6px;">Simpan dulu sebelum mengunduh atau melihat pratinjau.</p>
+    <button class="btn btn-secondary" id="downloadBtn" style="width:100%;">Unduh config.json</button>
+    <a href="index.html" target="_blank" class="preview-link" id="previewLink">Buka pratinjau undangan →</a>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  var FIELDS = ['childName','childNickname','fatherName','motherName','locationName','locationAddress','mapsUrl'];
+  var photoData = '';
+  var audioData = '';
+
+  function showToast(msg){
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 2200);
+  }
+
+  function renderPhotoPreview(){
+    var wrap = document.getElementById('photoPreviewWrap');
+    wrap.innerHTML = photoData ? '<img class="file-preview-img" src="' + photoData + '" alt="Pratinjau foto">' : '';
+  }
+  function renderAudioPreview(){
+    var status = document.getElementById('audioStatus');
+    var player = document.getElementById('audioPreviewPlayer');
+    if(audioData){
+      status.textContent = 'Musik siap digunakan';
+      player.src = audioData;
+      player.style.display = 'block';
+    } else {
+      status.textContent = 'Belum ada file musik';
+      player.style.display = 'none';
+      player.src = '';
+    }
+  }
+
+  // ---------- Load existing config ----------
+  function loadConfig(){
+    try{
+      var stored = localStorage.getItem('aqiqah_config');
+      if(stored) return JSON.parse(stored);
+    }catch(e){}
+    return null;
+  }
+  var config = loadConfig();
+  if(config){
+    FIELDS.forEach(function(f){ if(config[f] && document.getElementById(f)) document.getElementById(f).value = config[f]; });
+    if(config.eventDate) document.getElementById('eventDate').value = config.eventDate;
+    if(config.photoData){ photoData = config.photoData; renderPhotoPreview(); }
+    if(config.audioData){ audioData = config.audioData; renderAudioPreview(); }
+  }
+  var baseUrl = localStorage.getItem('aqiqah_baseUrl') || (window.location.origin + window.location.pathname.replace('admin.html','') + 'index.html');
+  document.getElementById('baseUrl').value = baseUrl;
+
+  // ---------- File uploads ----------
+  function readFileAsDataURL(file, cb){
+    var reader = new FileReader();
+    reader.onload = function(e){ cb(e.target.result); };
+    reader.onerror = function(){ showToast('Gagal membaca file'); };
+    reader.readAsDataURL(file);
+  }
+
+  document.getElementById('photoFile').addEventListener('change', function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    readFileAsDataURL(file, function(dataUrl){
+      photoData = dataUrl;
+      renderPhotoPreview();
+      showToast('Foto dimuat — klik Simpan Konfigurasi');
+    });
+  });
+  document.getElementById('clearPhoto').addEventListener('click', function(){
+    photoData = '';
+    document.getElementById('photoFile').value = '';
+    renderPhotoPreview();
+  });
+
+  document.getElementById('audioFile').addEventListener('change', function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    readFileAsDataURL(file, function(dataUrl){
+      audioData = dataUrl;
+      renderAudioPreview();
+      showToast('Musik dimuat — klik Simpan Konfigurasi');
+    });
+  });
+  document.getElementById('clearAudio').addEventListener('click', function(){
+    audioData = '';
+    document.getElementById('audioFile').value = '';
+    renderAudioPreview();
+  });
+
+  // ---------- Save config ----------
+  function gatherConfig(){
+    var cfg = {};
+    FIELDS.forEach(function(f){ cfg[f] = document.getElementById(f).value.trim(); });
+    cfg.eventDate = document.getElementById('eventDate').value;
+    cfg.photoData = photoData;
+    cfg.audioData = audioData;
+    return cfg;
+  }
+
+  document.getElementById('saveBtn').addEventListener('click', function(){
+    var cfg = gatherConfig();
+    try{
+      localStorage.setItem('aqiqah_config', JSON.stringify(cfg));
+      localStorage.setItem('aqiqah_baseUrl', document.getElementById('baseUrl').value.trim());
+      var status = document.getElementById('saveStatus');
+      status.classList.add('show');
+      setTimeout(function(){ status.classList.remove('show'); }, 2500);
+      showToast('Konfigurasi tersimpan');
+    }catch(err){
+      showToast('Gagal menyimpan — file mungkin terlalu besar');
+    }
+  });
+
+  // ---------- Download config.json ----------
+  document.getElementById('downloadBtn').addEventListener('click', function(){
+    var cfg = gatherConfig();
+    var blob = new Blob([JSON.stringify(cfg, null, 2)], {type:'application/json'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'config.json';
+    a.click();
+  });
+
+  // ---------- Guest links ----------
+  function slugify(name){
+    return encodeURIComponent(name.trim().replace(/\s+/g,'+'));
+  }
+
+  document.getElementById('generateLinksBtn').addEventListener('click', function(){
+    var raw = document.getElementById('guestList').value;
+    var names = raw.split(/[\n,]/).map(function(s){ return s.trim(); }).filter(Boolean);
+    var base = document.getElementById('baseUrl').value.trim().replace(/\/$/,'');
+    var tbody = document.getElementById('linksBody');
+    tbody.innerHTML = '';
+
+    if(names.length === 0){
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="3">Belum ada tautan dibuat</td></tr>';
+      return;
+    }
+
+    names.forEach(function(name){
+      var link = base + '?to=' + slugify(name);
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + name + '</td>' +
+        '<td class="link-cell">' + link + '</td>' +
+        '<td><button class="btn btn-secondary btn-small copy-btn" data-link="' + link + '">Copy</button></td>';
+      tbody.appendChild(tr);
+    });
+
+    localStorage.setItem('aqiqah_baseUrl', base);
+    showToast(names.length + ' tautan dibuat');
+  });
+
+  document.getElementById('linksBody').addEventListener('click', function(e){
+    if(e.target.classList.contains('copy-btn')){
+      var link = e.target.getAttribute('data-link');
+      navigator.clipboard.writeText(link).then(function(){
+        showToast('Tautan disalin');
+      }).catch(function(){
+        showToast('Gagal menyalin, salin manual');
+      });
+    }
+  });
+
+  // ---------- Preview link ensures latest config saved ----------
+  document.getElementById('previewLink').addEventListener('click', function(){
+    var cfg = gatherConfig();
+    localStorage.setItem('aqiqah_config', JSON.stringify(cfg));
+  });
+})();
+</script>
 </body>
 </html>
