@@ -25,7 +25,7 @@
   .card h2{font-size:18px; margin:0 0 16px; color:var(--violet);}
   label{display:block; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--turquoise); margin:14px 0 6px; font-weight:600;}
   label:first-of-type{margin-top:0;}
-  input[type=text], input[type=datetime-local], input[type=url], textarea{
+  input[type=text], input[type=datetime-local], input[type=url], textarea, select{
     width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:10px;
     font-family:'Jost',sans-serif; font-size:14px; background:var(--cream); color:var(--ink);
   }
@@ -110,6 +110,14 @@
 
     <label>Link Google Maps</label>
     <input type="url" id="mapsUrl" placeholder="https://maps.google.com/...">
+
+    <label>Tema Warna</label>
+    <select id="theme">
+      <option value="default">Soft Baby (Lavender &amp; Krem)</option>
+      <option value="soft-blue">Soft Blue Islamic</option>
+      <option value="safari">Safari Baby</option>
+      <option value="pink-cream">Pink Cream</option>
+    </select>
   </div>
 
   <!-- MEDIA UPLOAD -->
@@ -137,8 +145,8 @@
   <!-- GUEST LIST -->
   <div class="card">
     <h2>Daftar Tamu</h2>
-    <label>Nama Tamu (satu nama per baris, atau pisahkan dengan koma)</label>
-    <textarea id="guestList" placeholder="Budi Santoso&#10;Siti Aminah&#10;Keluarga Bapak Hartono" style="min-height:120px;"></textarea>
+    <label>Nama Tamu (satu nama per baris, atau pisahkan dengan koma). Tambahkan kota dengan tanda " | " jika perlu, contoh: Budi Santoso | Bandung</label>
+    <textarea id="guestList" placeholder="Budi Santoso | Bandung&#10;Siti Aminah&#10;Keluarga Bapak Hartono | Jakarta" style="min-height:120px;"></textarea>
 
     <label>Alamat Website Undangan (base URL)</label>
     <input type="text" id="baseUrl" placeholder="https://undangan-anda.com">
@@ -172,7 +180,7 @@
 
 <script>
 (function(){
-  var FIELDS = ['childName','childNickname','fatherName','motherName','locationName','locationAddress','mapsUrl'];
+  var FIELDS = ['childName','childNickname','fatherName','motherName','locationName','locationAddress','mapsUrl','theme'];
   var photoData = '';
   var audioData = '';
 
@@ -298,28 +306,33 @@
 
   document.getElementById('generateLinksBtn').addEventListener('click', function(){
     var raw = document.getElementById('guestList').value;
-    var names = raw.split(/[\n,]/).map(function(s){ return s.trim(); }).filter(Boolean);
+    var lines = raw.split(/[\n,]/).map(function(s){ return s.trim(); }).filter(Boolean);
     var base = document.getElementById('baseUrl').value.trim().replace(/\/$/,'');
     var tbody = document.getElementById('linksBody');
     tbody.innerHTML = '';
 
-    if(names.length === 0){
+    if(lines.length === 0){
       tbody.innerHTML = '<tr class="empty-row"><td colspan="3">Belum ada tautan dibuat</td></tr>';
       return;
     }
 
-    names.forEach(function(name){
+    lines.forEach(function(line){
+      var parts = line.split('|').map(function(s){ return s.trim(); });
+      var name = parts[0];
+      var city = parts[1] || '';
+      if(!name) return;
       var link = base + '?to=' + slugify(name);
+      if(city) link += '&city=' + slugify(city);
       var tr = document.createElement('tr');
       tr.innerHTML =
-        '<td>' + name + '</td>' +
+        '<td>' + name + (city ? ' <span style="opacity:.6;font-size:11px;">(' + city + ')</span>' : '') + '</td>' +
         '<td class="link-cell">' + link + '</td>' +
         '<td><button class="btn btn-secondary btn-small copy-btn" data-link="' + link + '">Copy</button></td>';
       tbody.appendChild(tr);
     });
 
     localStorage.setItem('aqiqah_baseUrl', base);
-    showToast(names.length + ' tautan dibuat');
+    showToast(lines.length + ' tautan dibuat');
   });
 
   document.getElementById('linksBody').addEventListener('click', function(e){
