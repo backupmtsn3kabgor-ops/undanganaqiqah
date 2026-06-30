@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Admin · Generator Undangan Aqiqah</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Jost:wght@300;400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FAF6EE; --cream-deep:#F1EADC;
+    --sage:#4A5D45; --sage-deep:#36452F;
+    --terracotta:#C97B5C; --gold:#C9A35D;
+    --ink:#2E2B26; --line:rgba(74,93,69,0.18);
+    --danger:#B5503C;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:'Jost',sans-serif;}
+  .wrap{max-width:560px;margin:0 auto;padding:0 0 80px;}
+  header.topbar{
+    padding:34px 22px 26px;border-bottom:1px solid var(--line);
+    background:var(--cream-deep);
+  }
+  header.topbar .eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--sage);text-transform:uppercase;font-weight:600;}
+  header.topbar h1{font-family:'Playfair Display',serif;font-style:italic;font-weight:600;font-size:26px;margin:6px 0 0;color:var(--sage-deep);}
+
+  /* gate */
+  #gate{padding:60px 24px;text-align:center;}
+  #gate input{
+    width:100%;max-width:280px;padding:14px 16px;border-radius:10px;
+    border:1.3px solid var(--line);font-size:15px;font-family:inherit;background:#fff;
+  }
+  #gate button{
+    margin-top:14px;border:none;background:var(--sage-deep);color:var(--cream);
+    padding:13px 28px;border-radius:999px;font-size:14px;cursor:pointer;min-height:44px;
+  }
+  #gate .err{color:var(--danger);font-size:13px;margin-top:10px;display:none;}
+
+  #panel{display:none;}
+
+  section.block{padding:30px 22px;border-bottom:1px solid var(--line);}
+  section.block h2{
+    font-family:'Playfair Display',serif;font-style:italic;font-weight:600;font-size:19px;
+    color:var(--sage-deep);margin:0 0 4px;
+  }
+  section.block .desc{font-size:13px;color:#84796a;margin:0 0 18px;line-height:1.6;}
+
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:12px;letter-spacing:.04em;color:#6b6357;margin-bottom:6px;font-weight:500;}
+  .field input, .field textarea{
+    width:100%;padding:12px 14px;border-radius:10px;border:1.3px solid var(--line);
+    background:#fff;font-family:inherit;font-size:14.5px;color:var(--ink);min-height:44px;
+  }
+  .field textarea{min-height:110px;resize:vertical;line-height:1.6;}
+  .field input:focus, .field textarea:focus{outline:2px solid var(--gold);outline-offset:1px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+  .btn{
+    border:none;border-radius:999px;padding:13px 22px;font-size:14px;font-weight:500;
+    cursor:pointer;min-height:44px;display:inline-flex;align-items:center;gap:8px;
+    font-family:'Jost',sans-serif;
+  }
+  .btn-primary{background:var(--sage-deep);color:var(--cream);}
+  .btn-secondary{background:transparent;border:1.3px solid var(--sage-deep);color:var(--sage-deep);}
+  .btn-ghost{background:var(--cream-deep);color:var(--ink);}
+  .btn:active{transform:scale(0.98);}
+  .btn svg{width:15px;height:15px;}
+
+  .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;}
+
+  .guest-list{margin-top:18px;display:flex;flex-direction:column;gap:8px;}
+  .guest-row{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    background:var(--cream-deep);border-radius:12px;padding:11px 14px;
+  }
+  .guest-row .name{font-size:14px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .guest-row button{
+    flex-shrink:0;border:none;background:var(--sage-deep);color:var(--cream);
+    border-radius:999px;padding:8px 14px;font-size:12px;min-height:36px;cursor:pointer;
+  }
+  .guest-row button.copied{background:var(--terracotta);}
+
+  .status-line{
+    margin-top:14px;font-size:12.5px;color:var(--sage);display:none;
+  }
+  .status-line.show{display:block;}
+
+  .hint{font-size:12px;color:#9a9182;margin-top:8px;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="topbar">
+    <p class="eyebrow">Konfigurasi &amp; Distribusi</p>
+    <h1>Generator Undangan Aqiqah</h1>
+  </header>
+
+  <!-- Simple password gate (optional, client-side only) -->
+  <div id="gate">
+    <p class="desc" style="text-align:center;">Masukkan kata sandi admin untuk melanjutkan.</p>
+    <input type="password" id="gate-pass" placeholder="Kata sandi" />
+    <br>
+    <button type="button" id="gate-btn">Masuk</button>
+    <p class="err" id="gate-err">Kata sandi salah, silakan coba lagi.</p>
+    <p class="hint">Default: <strong>admin123</strong> — ubah di kode admin.html (variabel ADMIN_PASSWORD) sebelum deploy.</p>
+  </div>
+
+  <div id="panel">
+
+    <section class="block">
+      <h2>Data Acara</h2>
+      <p class="desc">Informasi ini akan tampil di seluruh halaman undangan.</p>
+
+      <div class="field"><label>Nama Anak (versi singkat, untuk cover)</label><input id="f-namaDepan" placeholder="Khadija Azzahra"></div>
+      <div class="field"><label>Nama Lengkap Anak</label><input id="f-namaLengkap" placeholder="Khadija Azzahra Putri"></div>
+      <div class="field"><label>Nama Panggilan</label><input id="f-panggilan" placeholder="Dija"></div>
+      <div class="row2">
+        <div class="field"><label>Nama Ayah</label><input id="f-ayah" placeholder="Ahmad Fauzan"></div>
+        <div class="field"><label>Nama Ibu</label><input id="f-ibu" placeholder="Siti Nuraini"></div>
+      </div>
+      <div class="field"><label>Tanggal &amp; Waktu Acara</label><input type="datetime-local" id="f-tanggal"></div>
+      <div class="field"><label>Tampilan Jam (teks bebas)</label><input id="f-waktuText" placeholder="09:00 WIB – Selesai"></div>
+      <div class="field"><label>Lokasi (teks)</label><input id="f-lokasi" placeholder="Jl. Melati No. 8, Bandung"></div>
+      <div class="field"><label>Link Google Maps</label><input id="f-maps" placeholder="https://maps.google.com/..."></div>
+    </section>
+
+    <section class="block">
+      <h2>Musik Latar</h2>
+      <p class="desc">Tempel URL file audio (.mp3) yang sudah dihosting (boleh dikosongkan).</p>
+      <div class="field"><label>URL Audio</label><input id="f-audio" placeholder="https://contoh.com/musik.mp3"></div>
+    </section>
+
+    <section class="block">
+      <h2>Daftar Tamu</h2>
+      <p class="desc">Satu nama per baris, atau pisahkan dengan koma.</p>
+      <div class="field">
+        <textarea id="f-tamu" placeholder="Budi Santoso&#10;Siti Aminah&#10;Keluarga Bapak Hartono"></textarea>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="btn-generate">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          Buat Tautan
+        </button>
+      </div>
+      <div class="guest-list" id="guest-list"></div>
+      <p class="status-line" id="gen-status">Tautan berhasil dibuat untuk semua tamu.</p>
+    </section>
+
+    <section class="block">
+      <h2>Simpan Konfigurasi</h2>
+      <p class="desc">Simpan agar bisa dipakai lagi di browser ini, atau unduh sebagai file untuk dideploy.</p>
+      <div class="actions">
+        <button type="button" class="btn btn-secondary" id="btn-save-local">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M7 3v6h8V3M7 21v-8h10v8"/></svg>
+          Simpan ke Browser
+        </button>
+        <button type="button" class="btn btn-ghost" id="btn-download">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></svg>
+          Unduh config.json
+        </button>
+      </div>
+      <p class="status-line" id="save-status">Tersimpan.</p>
+      <p class="hint">config.json bisa diletakkan di folder proyek dan dimuat manual, atau gunakan tautan tamu di atas (yang sudah membawa data secara otomatis lewat URL) — tidak perlu upload config.json untuk hosting statis sederhana.</p>
+    </section>
+
+  </div>
+</div>
+
+<script>
+const ADMIN_PASSWORD = "admin123"; // ganti sebelum deploy
+
+document.getElementById('gate-btn').addEventListener('click', () => {
+  const val = document.getElementById('gate-pass').value;
+  if(val === ADMIN_PASSWORD){
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('panel').style.display = 'block';
+    loadSavedConfig();
+  } else {
+    document.getElementById('gate-err').style.display = 'block';
+  }
+});
+document.getElementById('gate-pass').addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter') document.getElementById('gate-btn').click();
+});
+
+function collectConfig(){
+  const dt = document.getElementById('f-tanggal').value; // e.g. 2026-10-12T09:00
+  const date = dt ? new Date(dt) : null;
+  const tanggalText = date ? date.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'}) : '';
+  return {
+    namaAnakDepan: document.getElementById('f-namaDepan').value || 'Nama Anak',
+    namaLengkap: document.getElementById('f-namaLengkap').value || 'Nama Lengkap Anak',
+    namaPanggilan: document.getElementById('f-panggilan').value || '',
+    namaAyah: document.getElementById('f-ayah').value || '',
+    namaIbu: document.getElementById('f-ibu').value || '',
+    tanggalISO: dt || '',
+    tanggalText: tanggalText,
+    waktuText: document.getElementById('f-waktuText').value || '',
+    lokasiText: document.getElementById('f-lokasi').value || '',
+    mapsUrl: document.getElementById('f-maps').value || '',
+    audioUrl: document.getElementById('f-audio').value || ''
+  };
+}
+
+function fillFormFromConfig(cfg){
+  if(!cfg) return;
+  document.getElementById('f-namaDepan').value = cfg.namaAnakDepan || '';
+  document.getElementById('f-namaLengkap').value = cfg.namaLengkap || '';
+  document.getElementById('f-panggilan').value = cfg.namaPanggilan || '';
+  document.getElementById('f-ayah').value = cfg.namaAyah || '';
+  document.getElementById('f-ibu').value = cfg.namaIbu || '';
+  document.getElementById('f-tanggal').value = cfg.tanggalISO || '';
+  document.getElementById('f-waktuText').value = cfg.waktuText || '';
+  document.getElementById('f-lokasi').value = cfg.lokasiText || '';
+  document.getElementById('f-maps').value = cfg.mapsUrl || '';
+  document.getElementById('f-audio').value = cfg.audioUrl || '';
+}
+
+function loadSavedConfig(){
+  try{
+    const raw = localStorage.getItem('aqiqahConfig');
+    if(raw) fillFormFromConfig(JSON.parse(raw));
+  }catch(e){}
+}
+
+function encodeConfig(cfg){
+  return btoa(encodeURIComponent(JSON.stringify(cfg)));
+}
+
+function baseUrl(){
+  // points to index.html alongside admin.html
+  return window.location.href.replace(/admin\.html.*$/, 'index.html');
+}
+
+document.getElementById('btn-generate').addEventListener('click', () => {
+  const cfg = collectConfig();
+  const encoded = encodeConfig(cfg);
+  const namesRaw = document.getElementById('f-tamu').value;
+  const names = namesRaw.split(/[\n,]/).map(n => n.trim()).filter(Boolean);
+  const listEl = document.getElementById('guest-list');
+  listEl.innerHTML = '';
+
+  if(names.length === 0){
+    listEl.innerHTML = '<p class="hint">Belum ada nama tamu. Isi daftar tamu di atas lalu klik "Buat Tautan" lagi.</p>';
+    return;
+  }
+
+  names.forEach(name => {
+    const url = `${baseUrl()}?to=${encodeURIComponent(name.replace(/\s+/g,'+'))}&data=${encoded}`;
+    const row = document.createElement('div');
+    row.className = 'guest-row';
+    row.innerHTML = `<span class="name">${name}</span><button type="button">Copy</button>`;
+    row.querySelector('button').addEventListener('click', (e) => {
+      navigator.clipboard.writeText(url).then(()=>{
+        const b = e.target;
+        b.textContent = 'Tersalin';
+        b.classList.add('copied');
+        setTimeout(()=>{ b.textContent='Copy'; b.classList.remove('copied'); }, 1600);
+      });
+    });
+    listEl.appendChild(row);
+  });
+
+  const status = document.getElementById('gen-status');
+  status.classList.add('show');
+  setTimeout(()=> status.classList.remove('show'), 2500);
+});
+
+document.getElementById('btn-save-local').addEventListener('click', () => {
+  const cfg = collectConfig();
+  localStorage.setItem('aqiqahConfig', JSON.stringify(cfg));
+  const status = document.getElementById('save-status');
+  status.classList.add('show');
+  setTimeout(()=> status.classList.remove('show'), 2200);
+});
+
+document.getElementById('btn-download').addEventListener('click', () => {
+  const cfg = collectConfig();
+  const blob = new Blob([JSON.stringify(cfg, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'config.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+});
+</script>
+</body>
+</html>
