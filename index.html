@@ -6,22 +6,51 @@
 <title>Undangan Aqiqah</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:ital@0;1&family=Baloo+2:wght@500;600;700;800&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital@0;1&family=Quicksand:wght@500;600;700&family=Poppins:wght@300;400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#2A1F3D;
-    --cream:#FFF8EC;
-    --cream-2:#FFEFD6;
-    --coral:#FF6B5B;
-    --turquoise:#1FC2BD;
-    --sunshine:#FFC93C;
-    --magenta:#FF4FA0;
-    --violet:#7B5CFA;
-    --line: rgba(42,31,61,0.14);
+    /* ---- Design tokens (PRD §22) ---- */
+    --font-heading:'Quicksand', sans-serif;
+    --font-body:'Poppins', sans-serif;
+    --font-accent:'Pacifico', cursive;
+
+    --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px;
+    --space-5:24px; --space-6:32px; --space-7:48px; --space-8:64px;
+
+    --radius-sm:12px; --radius-md:16px; --radius-lg:24px; --radius-pill:999px;
+    --shadow-card:0 10px 30px rgba(0,0,0,0.06);
+    --shadow-floating:0 8px 24px rgba(0,0,0,0.14);
+
+    /* ---- Soft Baby Aqiqah palette (PRD §15.1), mapped to existing var names ---- */
+    --ink:#2B2B2B;          /* color-text */
+    --cream:#F4EFE7;        /* color-bg */
+    --cream-2:#EFE6D8;      /* soft tint surface */
+    --coral:#DCA982;        /* color-accent (peach) */
+    --turquoise:#7E9B68;    /* color-leaf (green ornament) */
+    --sunshine:#E3C27E;     /* soft gold accent */
+    --magenta:#7778BE;      /* color-primary (lavender) */
+    --violet:#5F61A6;       /* color-primary-dark */
+    --line: rgba(43,43,43,0.12);
+    --surface:#FFFFFF;
   }
+
+  /* ---- Alternate themes, switch via data-theme on <html> ---- */
+  [data-theme="soft-blue"]{
+    --ink:#222222; --cream:#EAF6FB; --cream-2:#DCEEF6; --coral:#D6BE4A;
+    --turquoise:#A8BE82; --sunshine:#E8D27A; --magenta:#4F85B2; --violet:#2F567A; --surface:#FFFFFF;
+  }
+  [data-theme="safari"]{
+    --ink:#2B2B2B; --cream:#F5EEDB; --cream-2:#EFE3C2; --coral:#EBA06F;
+    --turquoise:#A8BE82; --sunshine:#E3C27E; --magenta:#8FAE6A; --violet:#5F7F45; --surface:#FFFFFF;
+  }
+  [data-theme="pink-cream"]{
+    --ink:#2B2B2B; --cream:#FFF1EC; --cream-2:#FBE2D8; --coral:#E6B98A;
+    --turquoise:#9EBB8D; --sunshine:#EBC79A; --magenta:#D98FA3; --violet:#B96B80; --surface:#FFFFFF;
+  }
+
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;background:var(--cream);color:var(--ink);font-family:'Jost',sans-serif;overflow-x:hidden;}
-  h1,h2,h3,.display{font-family:'Baloo 2',sans-serif;}
+  html,body{margin:0;padding:0;background:var(--cream);color:var(--ink);font-family:var(--font-body);overflow-x:hidden;}
+  h1,h2,h3,.display{font-family:var(--font-heading); font-weight:700;}
   .arabic{font-family:'Amiri',serif;}
 
   html{ scroll-behavior:smooth; }
@@ -35,9 +64,8 @@
     position:fixed; inset:0; z-index:50;
     max-width:480px; margin:0 auto;
     background:
-      radial-gradient(circle at 14% 12%, rgba(255,201,60,.55) 0%, transparent 38%),
-      radial-gradient(circle at 88% 18%, rgba(255,79,160,.4) 0%, transparent 40%),
-      radial-gradient(circle at 50% 92%, rgba(31,194,189,.35) 0%, transparent 45%),
+      radial-gradient(circle at 14% 10%, rgba(220,169,130,.35) 0%, transparent 40%),
+      radial-gradient(circle at 88% 85%, rgba(126,155,104,.22) 0%, transparent 42%),
       var(--cream);
     display:flex; flex-direction:column; align-items:center; justify-content:space-between;
     padding:8vh 8% 6vh;
@@ -46,19 +74,20 @@
   }
   #cover.opened{ transform: translateY(-100%); opacity:0; pointer-events:none; }
 
-  .confetti{position:absolute; border-radius:3px; opacity:.85; z-index:0;}
+  .confetti{position:absolute; border-radius:3px; opacity:.6; z-index:0;}
 
-  .cover-eyebrow{letter-spacing:.25em; text-transform:uppercase; font-size:11px; color:var(--violet); opacity:.9; font-weight:500;}
-  .cover-bismillah{font-size:24px; color:var(--coral); margin:10px 0 4px;}
-  .cover-greeting{font-size:13px; color:var(--ink); opacity:.75; margin-top:6px;}
-  .cover-guest-label{font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:var(--turquoise); margin-top:22px; font-weight:600;}
-  .cover-guest{font-size:30px; font-weight:700; margin-top:6px; padding:0 6px; border-bottom:3px solid var(--sunshine); padding-bottom:14px; min-height:1.4em; font-family:'Baloo 2',sans-serif; color:var(--ink);}
+  .cover-eyebrow{font-family:var(--font-body); letter-spacing:.25em; text-transform:uppercase; font-size:11px; color:var(--violet); opacity:.9; font-weight:600;}
+  .cover-baby-name{font-family:var(--font-heading); font-size:clamp(32px,10vw,44px); font-weight:700; color:var(--ink); margin-top:10px; line-height:1.1;}
+  .cover-event-date{font-family:var(--font-body); font-size:clamp(14px,3.5vw,15px); font-weight:500; color:var(--ink); opacity:.7; margin-top:8px;}
+  .cover-guest-label{font-family:var(--font-body); font-size:clamp(14px,3.8vw,15px); letter-spacing:.15em; text-transform:uppercase; color:var(--turquoise); margin-top:22px; font-weight:600;}
+  .cover-guest{font-family:var(--font-heading); font-size:clamp(22px,6.5vw,30px); font-weight:700; line-height:1.2; margin-top:6px; padding:0 6px; border-bottom:3px solid var(--sunshine); padding-bottom:14px; min-height:1.4em; color:var(--ink);}
+  .cover-guest-city{font-family:var(--font-body); font-size:clamp(14px,3.8vw,16px); line-height:1.4; font-weight:400; opacity:.65;}
 
   .btn-open{
     position:relative; z-index:2;
     background:linear-gradient(135deg, var(--coral), var(--magenta));
     color:#fff; border:none;
-    padding:16px 34px; border-radius:999px; font-family:'Jost',sans-serif; font-size:13px;
+    padding:16px 34px; border-radius:999px; font-family:var(--font-body); font-size:clamp(13px,2vw,14px);
     letter-spacing:.12em; text-transform:uppercase; font-weight:600; cursor:pointer;
     min-height:44px; min-width:44px;
     display:flex; align-items:center; gap:10px;
@@ -68,29 +97,40 @@
   .btn-open:active{ transform: scale(.96); }
   .btn-open svg{width:16px;height:16px;}
 
+  @keyframes softPulse{
+    0%{ box-shadow:0 0 0 0 rgba(95,97,166,.25); }
+    70%{ box-shadow:0 0 0 10px rgba(95,97,166,0); }
+    100%{ box-shadow:0 0 0 0 rgba(95,97,166,0); }
+  }
+  .btn-open{ animation: softPulse 2.2s infinite; }
+
+  @keyframes floating{
+    0%{ transform:translateY(0); }
+    50%{ transform:translateY(-8px); }
+    100%{ transform:translateY(0); }
+  }
+  .ornament-floating{ animation: floating 5s ease-in-out infinite; }
+
   /* ---------- SECTIONS ---------- */
   section{position:relative; padding:64px 8% 56px; scroll-snap-align:start; scroll-snap-stop:always; min-height:92vh; display:flex; flex-direction:column; justify-content:center; overflow:hidden;}
   .divider{ display:none; }
 
-  .reveal{ opacity:0; transition: opacity 1s cubic-bezier(.22,1,.36,1), transform 1s cubic-bezier(.22,1,.36,1); will-change:transform,opacity; }
-  .reveal.slide-l{ transform: translateX(-70px) scale(.96); }
-  .reveal.slide-r{ transform: translateX(70px) scale(.96); }
-  .reveal.slide-u{ transform: translateY(60px) scale(.96); }
+  .reveal{ opacity:0; transform:translateY(20px); transition: opacity 600ms ease-out, transform 600ms ease-out; will-change:transform,opacity; }
   .reveal.in{ opacity:1; transform:none; }
 
-  .stagger > *{ opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1); }
+  .stagger > *{ opacity:0; transform:translateY(20px); transition:opacity 600ms ease-out, transform 600ms ease-out; }
   .reveal.in.stagger > *{ opacity:1; transform:none; }
-  .stagger > *:nth-child(1){ transition-delay:.05s; }
-  .stagger > *:nth-child(2){ transition-delay:.15s; }
-  .stagger > *:nth-child(3){ transition-delay:.25s; }
-  .stagger > *:nth-child(4){ transition-delay:.35s; }
-  .stagger > *:nth-child(5){ transition-delay:.45s; }
-  .stagger > *:nth-child(6){ transition-delay:.55s; }
+  .stagger > *:nth-child(1){ transition-delay:0ms; }
+  .stagger > *:nth-child(2){ transition-delay:100ms; }
+  .stagger > *:nth-child(3){ transition-delay:200ms; }
+  .stagger > *:nth-child(4){ transition-delay:300ms; }
+  .stagger > *:nth-child(5){ transition-delay:400ms; }
+  .stagger > *:nth-child(6){ transition-delay:500ms; }
 
   .bg-blob{ position:absolute; border-radius:50%; filter:blur(2px); opacity:.25; z-index:0; pointer-events:none; transition:transform .1s linear; }
 
-  .eyebrow{font-size:11px; letter-spacing:.25em; text-transform:uppercase; color:var(--magenta); text-align:center; margin-bottom:10px; font-weight:600;}
-  .section-title{font-size:13px; text-align:center; color:var(--ink); opacity:.55; font-style:italic; margin-bottom:30px;}
+  .eyebrow{font-family:var(--font-body); font-size:11px; letter-spacing:.25em; text-transform:uppercase; color:var(--magenta); text-align:center; margin-bottom:10px; font-weight:700;}
+  .section-title{font-family:var(--font-body); font-size:clamp(14px,4vw,16px); text-align:center; color:var(--ink); opacity:.6; font-style:italic; margin-bottom:30px; font-weight:500;}
 
   /* PROFILE */
   .baby-frame{
@@ -103,8 +143,8 @@
   }
   .baby-frame svg{width:78%;height:78%;}
   .baby-frame img{width:100%;height:100%;object-fit:cover;}
-  .child-name{font-size:32px; text-align:center; font-weight:700; font-family:'Baloo 2',sans-serif; color:var(--ink);}
-  .child-nickname{text-align:center; font-size:13px; color:var(--turquoise); letter-spacing:.06em; margin-top:4px; font-weight:600;}
+  .child-name{font-family:var(--font-accent); font-size:clamp(28px,7.5vw,38px); text-align:center; font-weight:400; line-height:1.2; color:var(--ink);}
+  .child-nickname{font-family:var(--font-body); text-align:center; font-size:13px; color:var(--turquoise); letter-spacing:.06em; margin-top:6px; font-weight:600;}
 
   .verse-box{
     margin-top:32px; padding:22px 20px; background:linear-gradient(135deg, rgba(123,92,250,.1), rgba(31,194,189,.1));
@@ -124,19 +164,23 @@
     color:#fff; border-radius:24px;
     padding:34px 22px 28px; text-align:center; position:relative; overflow:hidden;
   }
-  .event-day{font-size:28px; font-weight:700; position:relative; z-index:1; font-family:'Baloo 2',sans-serif;}
-  .event-date{font-size:14px; opacity:.9; margin-top:2px; position:relative; z-index:1;}
-  .event-time{font-size:13px; opacity:.75; margin-top:10px; position:relative; z-index:1;}
+  .event-title{font-family:var(--font-heading); font-size:13px; letter-spacing:.2em; text-transform:uppercase; font-weight:700; opacity:.85; margin-bottom:10px; position:relative; z-index:1;}
+  .event-day{font-family:var(--font-heading); font-size:22px; font-weight:700; position:relative; z-index:1;}
+  .event-date{font-family:var(--font-body); font-size:14px; font-weight:500; color:rgba(255,255,255,.9); margin-top:2px; position:relative; z-index:1;}
+  .event-time{font-family:var(--font-body); font-size:16px; font-weight:600; color:rgba(255,255,255,.92); margin-top:10px; position:relative; z-index:1;}
+  #event-day.reveal{ transition-delay:0ms; }
+  #event-date.reveal{ transition-delay:120ms; }
+  #event-time.reveal{ transition-delay:240ms; }
 
   .countdown-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:26px; position:relative; z-index:1;}
   .cd-box{background:rgba(255,255,255,.15); border-radius:14px; padding:10px 4px;}
-  .cd-box .num{font-size:24px; font-weight:700; font-family:'Baloo 2',sans-serif; color:var(--sunshine);}
-  .cd-box .lbl{font-size:9px; letter-spacing:.12em; text-transform:uppercase; opacity:.8; margin-top:4px;}
-  .cd-expired{font-size:14px; font-style:italic; margin-top:20px; position:relative; z-index:1;}
+  .cd-box .num{font-family:var(--font-heading); font-size:24px; font-weight:700; color:var(--sunshine);}
+  .cd-box .lbl{font-family:var(--font-body); font-size:9px; letter-spacing:.12em; text-transform:uppercase; opacity:.8; margin-top:4px;}
+  .cd-expired{font-family:var(--font-body); font-size:14px; font-style:italic; margin-top:20px; position:relative; z-index:1;}
 
   .location-block{margin-top:28px; text-align:center;}
-  .location-name{font-size:17px; font-weight:600;}
-  .location-addr{font-size:13px; color:var(--ink); opacity:.7; margin-top:6px; line-height:1.6;}
+  .location-name{font-family:var(--font-heading); font-size:17px; font-weight:700;}
+  .location-addr{font-family:var(--font-body); font-size:14px; color:var(--ink); opacity:.7; margin-top:6px; line-height:1.6; font-weight:400;}
   .map-btn{
     margin-top:18px; display:inline-flex; align-items:center; gap:8px;
     background:var(--turquoise); color:#fff; text-decoration:none;
@@ -148,12 +192,12 @@
 
   /* FOOTER */
   footer{padding:46px 8% 64px; text-align:center; min-height:auto !important;}
-  footer .thanks{font-size:24px; font-weight:700; color:var(--coral);}
-  footer .from{font-size:12px; opacity:.6; margin-top:10px;}
+  footer .thanks{font-family:var(--font-accent); font-size:28px; font-weight:400; color:var(--coral);}
+  footer .from{font-family:var(--font-body); font-size:12px; opacity:.6; margin-top:10px;}
 
   /* AUDIO FLOATING */
   #audio-toggle{
-    position:fixed; bottom:22px; right:calc(50% - 220px); z-index:60;
+    position:fixed; bottom:84px; right:calc(50% - 220px); z-index:60;
     width:44px; height:44px; border-radius:50%;
     background:linear-gradient(135deg, var(--coral), var(--magenta));
     color:#fff; display:flex; align-items:center; justify-content:center;
@@ -166,7 +210,27 @@
   @media (prefers-reduced-motion: reduce){
     .reveal{ transition:opacity .3s ease; transform:none !important; }
     #cover{ transition:opacity .3s ease; }
+    *{ animation:none !important; transition:none !important; scroll-behavior:auto !important; }
   }
+
+  /* ---------- BOTTOM NAV ---------- */
+  #bottom-nav{
+    position:fixed; left:50%; bottom:0; width:100%; max-width:430px;
+    transform:translateX(-50%) translateY(100%);
+    height:64px; background:var(--cream); border-radius:20px 20px 0 0;
+    box-shadow:0 -8px 24px rgba(0,0,0,.08); z-index:55;
+    display:flex; align-items:center; justify-content:space-around;
+    opacity:0; transition:opacity 450ms ease-out, transform 450ms ease-out;
+  }
+  #bottom-nav.is-visible{ opacity:1; transform:translateX(-50%) translateY(0); }
+  #bottom-nav button{
+    background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:3px;
+    font-family:var(--font-body); font-size:10.5px; font-weight:600; color:var(--ink); opacity:.55;
+    cursor:pointer; min-height:44px; min-width:44px; padding:4px 6px;
+  }
+  #bottom-nav button svg{ width:20px; height:20px; }
+  #bottom-nav button.active{ opacity:1; color:var(--magenta); }
+  main{ padding-bottom:90px; }
 </style>
 </head>
 <body>
@@ -175,21 +239,20 @@
 
   <!-- COVER -->
   <div id="cover">
-    <div class="confetti" style="width:14px;height:14px;background:var(--sunshine);top:8%;left:10%;transform:rotate(20deg);"></div>
-    <div class="confetti" style="width:10px;height:10px;background:var(--turquoise);top:18%;right:14%;border-radius:50%;"></div>
-    <div class="confetti" style="width:16px;height:6px;background:var(--coral);top:30%;left:6%;transform:rotate(-30deg);"></div>
-    <div class="confetti" style="width:10px;height:10px;background:var(--magenta);bottom:22%;right:10%;border-radius:50%;"></div>
-    <div class="confetti" style="width:12px;height:12px;background:var(--violet);bottom:10%;left:14%;transform:rotate(45deg);"></div>
+    <div class="confetti ornament-floating" style="width:12px;height:12px;background:var(--sunshine);top:10%;left:10%;border-radius:50%;"></div>
+    <div class="confetti ornament-floating" style="width:9px;height:9px;background:var(--turquoise);top:20%;right:14%;border-radius:50%; animation-delay:1.2s;"></div>
+    <div class="confetti ornament-floating" style="width:10px;height:10px;background:var(--coral);bottom:14%;left:12%;border-radius:50%; animation-delay:2.4s;"></div>
 
     <div>
-      <div class="cover-eyebrow">Undangan Aqiqah</div>
-      <div class="cover-bismillah arabic">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
-      <div class="cover-greeting">Dengan penuh syukur, kami mengundang Bapak/Ibu/Saudara/i untuk hadir di acara Tasyakuran Aqiqah putra/putri kami</div>
+      <div class="cover-eyebrow">Akan Segera Melangsungkan Aqiqah</div>
+      <div class="cover-baby-name" id="cover-baby-name">Muhammad Arkan</div>
+      <div class="cover-event-date" id="cover-event-date">Selasa, 30 September 2025</div>
     </div>
 
     <div>
       <div class="cover-guest-label">Kepada Yth.</div>
       <div class="cover-guest" id="guest-name">Bapak/Ibu/Saudara/i</div>
+      <div class="cover-guest-city" id="guest-city" style="margin-top:6px;display:none;"></div>
     </div>
 
     <button class="btn-open" id="open-btn">
@@ -205,8 +268,9 @@
     <section id="profile">
       <div class="bg-blob" data-speed="0.06" style="width:120px;height:120px;background:var(--sunshine);top:6%;left:-30px;"></div>
       <div class="bg-blob" data-speed="0.1" style="width:90px;height:90px;background:var(--turquoise);bottom:10%;right:-20px;"></div>
-      <div class="reveal slide-u stagger">
-        <div class="eyebrow">Tasyakuran Aqiqah Putra/Putri Kami</div>
+      <div class="reveal stagger">
+        <div class="eyebrow">Assalamu'alaikum Wr. Wb.</div>
+        <div class="section-title">Dengan rahmat Allah yang Maha Kuasa, insha Allah kami akan melangsungkan aqiqah</div>
         <div class="baby-frame" id="baby-frame">
           <svg viewBox="0 0 100 100" fill="none">
             <path d="M50 28c-12 0-20 9-20 20 0 13 9 22 20 22s20-9 20-22c0-11-8-20-20-20z" fill="#FFEFD6" stroke="#2A1F3D" stroke-width="1"/>
@@ -241,14 +305,15 @@
     <!-- EVENT -->
     <section id="event">
       <div class="bg-blob" data-speed="0.08" style="width:140px;height:140px;background:var(--magenta);top:-20px;right:-30px;"></div>
-      <div class="reveal slide-l stagger">
+      <div class="reveal stagger">
         <div class="eyebrow">Waktu &amp; Tempat</div>
         <div class="section-title">Kami menantikan kehadiran Anda</div>
 
         <div class="event-card">
-          <div class="event-day" id="event-day">Minggu</div>
-          <div class="event-date" id="event-date">12 Oktober 2025</div>
-          <div class="event-time" id="event-time">09:00 WIB &mdash; Selesai</div>
+          <div class="event-title">Aqiqahan</div>
+          <div class="event-day reveal" id="event-day">Minggu</div>
+          <div class="event-date reveal" id="event-date">12 Oktober 2025</div>
+          <div class="event-time reveal" id="event-time">09:00 WIB &mdash; Selesai</div>
 
           <div class="countdown-grid" id="countdown">
             <div class="cd-box"><div class="num" id="cd-days">00</div><div class="lbl">Hari</div></div>
@@ -259,18 +324,20 @@
           <div class="cd-expired" id="cd-expired" style="display:none;">Acara Sedang Berlangsung</div>
         </div>
 
-        <div class="location-block">
+        <div class="location-block" id="lokasi">
+          <div class="eyebrow" style="margin-top:0;">Peta Lokasi</div>
+          <div class="section-title" style="margin-bottom:18px;">Anda dapat menuju lokasi acara kami dengan bantuan peta di bawah ini</div>
           <div class="location-name" id="location-name">Kediaman Keluarga</div>
           <div class="location-addr" id="location-addr">Jl. Melati No. 12, Jakarta Selatan</div>
           <a href="#" target="_blank" id="map-link" class="map-btn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-7.5-7-12a7 7 0 1114 0c0 4.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
-            Lihat Lokasi
+            Buka di Google Maps
           </a>
         </div>
       </div>
     </section>
 
-    <footer class="reveal slide-u">
+    <footer class="reveal">
       <div class="thanks display">Jazakumullahu Khairan</div>
       <div class="from">Atas kehadiran &amp; doa Bapak/Ibu/Saudara/i, kami ucapkan terima kasih.</div>
       <div class="from" style="margin-top:18px;">— Keluarga <span id="footer-parents">Ahmad &amp; Siti</span> —</div>
@@ -278,6 +345,21 @@
 
   </main>
 </div>
+
+<nav id="bottom-nav" aria-label="Navigasi undangan">
+  <button data-target="profile" class="active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>
+    Profil
+  </button>
+  <button data-target="event">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+    Acara
+  </button>
+  <button data-target="lokasi">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-7.5-7-12a7 7 0 1114 0c0 4.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
+    Lokasi
+  </button>
+</nav>
 
 <button id="audio-toggle" class="hidden" aria-label="Mute/unmute musik">
   <svg id="audio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M16 8a5 5 0 010 8"/><path d="M19 5a9 9 0 010 14"/></svg>
@@ -300,7 +382,8 @@
     locationAddress: "Jl. Melati No. 12, Jakarta Selatan",
     mapsUrl: "https://maps.google.com",
     audioData: "",
-    photoData: ""
+    photoData: "",
+    theme: "default"
   };
 
   function loadLocalConfig(){
@@ -329,15 +412,34 @@
 
   var config = await loadConfig();
 
-  // ---------- Guest name from URL ----------
+  if(config.theme && config.theme !== 'default'){
+    document.documentElement.setAttribute('data-theme', config.theme);
+  }
+
+  // ---------- Guest name & city from URL (sanitized) ----------
+  function sanitizeParam(raw, maxLen){
+    if(!raw) return '';
+    var decoded = decodeURIComponent(raw.replace(/\+/g, ' '));
+    decoded = decoded.replace(/<[^>]*>/g, ''); // strip HTML tags
+    decoded = decoded.trim();
+    if(decoded.length > maxLen) decoded = decoded.slice(0, maxLen);
+    return decoded;
+  }
   var params = new URLSearchParams(window.location.search);
-  var guest = params.get('to');
+  var guest = sanitizeParam(params.get('to') || '', 80);
+  var city = sanitizeParam(params.get('city') || '', 50);
   if(guest){
-    document.getElementById('guest-name').textContent = decodeURIComponent(guest.replace(/\+/g,' '));
+    document.getElementById('guest-name').textContent = guest;
+  }
+  if(city){
+    var cityEl = document.getElementById('guest-city');
+    cityEl.textContent = 'di ' + city;
+    cityEl.style.display = 'block';
   }
 
   // ---------- Populate content ----------
   document.getElementById('child-name').textContent = config.childName;
+  document.getElementById('cover-baby-name').textContent = config.childName;
   document.querySelector('.child-nickname').textContent = '— ' + config.childNickname + ' —';
   document.getElementById('father-name').textContent = config.fatherName;
   document.getElementById('mother-name').textContent = config.motherName;
@@ -357,6 +459,7 @@
   if(!isNaN(eventDate.getTime())){
     document.getElementById('event-day').textContent = dayNames[eventDate.getDay()];
     document.getElementById('event-date').textContent = eventDate.getDate() + ' ' + monthNames[eventDate.getMonth()] + ' ' + eventDate.getFullYear();
+    document.getElementById('cover-event-date').textContent = dayNames[eventDate.getDay()] + ', ' + eventDate.getDate() + ' ' + monthNames[eventDate.getMonth()] + ' ' + eventDate.getFullYear();
     var hh = String(eventDate.getHours()).padStart(2,'0');
     var mm = String(eventDate.getMinutes()).padStart(2,'0');
     document.getElementById('event-time').textContent = hh + ':' + mm + ' WIB — Selesai';
@@ -408,6 +511,7 @@
   document.getElementById('open-btn').addEventListener('click', function(){
     document.getElementById('cover').classList.add('opened');
     document.body.style.overflow = 'auto';
+    document.getElementById('bottom-nav').classList.add('is-visible');
     if(config.audioData){
       audioBtn.classList.remove('hidden');
       audioEl.play().catch(function(){});
@@ -418,6 +522,25 @@
   });
 
   document.body.style.overflow = 'hidden';
+
+  // ---------- Bottom nav: click to scroll + active state ----------
+  var navButtons = document.querySelectorAll('#bottom-nav button');
+  navButtons.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var target = document.getElementById(btn.getAttribute('data-target'));
+      if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+  var navTargets = ['profile','event','lokasi'].map(function(id){ return document.getElementById(id); }).filter(Boolean);
+  var navObserver = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        var id = entry.target.id;
+        navButtons.forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-target') === id); });
+      }
+    });
+  }, {threshold:0.4});
+  navTargets.forEach(function(t){ navObserver.observe(t); });
 
   // Scroll/slide reveal for elements beyond initial view
   var observer = new IntersectionObserver(function(entries){
