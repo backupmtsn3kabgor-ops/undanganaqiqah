@@ -2,289 +2,247 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin · Generator Undangan Aqiqah</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Jost:wght@300;400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --cream:#FAF6EE; --cream-deep:#F1EADC;
-    --sage:#4A5D45; --sage-deep:#36452F;
-    --terracotta:#C97B5C; --gold:#C9A35D;
-    --ink:#2E2B26; --line:rgba(74,93,69,0.18);
-    --danger:#B5503C;
+    --ink:#2B2620; --cream:#F7F2E7; --cream-2:#EFE6D3;
+    --sage:#6B7F5C; --sage-deep:#3D4A33; --gold:#C9A55C; --line:rgba(61,74,51,.18);
   }
   *{box-sizing:border-box;}
-  body{margin:0;background:var(--cream);color:var(--ink);font-family:'Jost',sans-serif;}
-  .wrap{max-width:560px;margin:0 auto;padding:0 0 80px;}
-  header.topbar{
-    padding:34px 22px 26px;border-bottom:1px solid var(--line);
-    background:var(--cream-deep);
-  }
-  header.topbar .eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--sage);text-transform:uppercase;font-weight:600;}
-  header.topbar h1{font-family:'Playfair Display',serif;font-style:italic;font-weight:600;font-size:26px;margin:6px 0 0;color:var(--sage-deep);}
+  body{margin:0; background:var(--cream); color:var(--ink); font-family:'Jost',sans-serif; padding-bottom:60px;}
+  h1,h2{font-family:'Cormorant Garamond',serif; font-weight:600;}
+  .wrap{max-width:640px; margin:0 auto; padding:0 6%;}
 
-  /* gate */
-  #gate{padding:60px 24px;text-align:center;}
-  #gate input{
-    width:100%;max-width:280px;padding:14px 16px;border-radius:10px;
-    border:1.3px solid var(--line);font-size:15px;font-family:inherit;background:#fff;
-  }
-  #gate button{
-    margin-top:14px;border:none;background:var(--sage-deep);color:var(--cream);
-    padding:13px 28px;border-radius:999px;font-size:14px;cursor:pointer;min-height:44px;
-  }
-  #gate .err{color:var(--danger);font-size:13px;margin-top:10px;display:none;}
+  header{padding:36px 6% 24px; text-align:center; border-bottom:1px solid var(--line);}
+  header h1{font-size:28px; margin:0;}
+  header p{font-size:12px; color:var(--sage-deep); opacity:.75; margin-top:6px;}
 
-  #panel{display:none;}
-
-  section.block{padding:30px 22px;border-bottom:1px solid var(--line);}
-  section.block h2{
-    font-family:'Playfair Display',serif;font-style:italic;font-weight:600;font-size:19px;
-    color:var(--sage-deep);margin:0 0 4px;
+  .card{background:#fff; border:1px solid var(--line); border-radius:18px; padding:24px 22px; margin-top:24px;}
+  .card h2{font-size:18px; margin:0 0 16px;}
+  label{display:block; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--sage-deep); margin:14px 0 6px;}
+  label:first-of-type{margin-top:0;}
+  input[type=text], input[type=datetime-local], input[type=url], textarea{
+    width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:10px;
+    font-family:'Jost',sans-serif; font-size:14px; background:var(--cream); color:var(--ink);
   }
-  section.block .desc{font-size:13px;color:#84796a;margin:0 0 18px;line-height:1.6;}
-
-  .field{margin-bottom:16px;}
-  .field label{display:block;font-size:12px;letter-spacing:.04em;color:#6b6357;margin-bottom:6px;font-weight:500;}
-  .field input, .field textarea{
-    width:100%;padding:12px 14px;border-radius:10px;border:1.3px solid var(--line);
-    background:#fff;font-family:inherit;font-size:14.5px;color:var(--ink);min-height:44px;
-  }
-  .field textarea{min-height:110px;resize:vertical;line-height:1.6;}
-  .field input:focus, .field textarea:focus{outline:2px solid var(--gold);outline-offset:1px;}
-  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  textarea{resize:vertical; min-height:90px;}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  @media (max-width:520px){ .row2{grid-template-columns:1fr;} }
 
   .btn{
-    border:none;border-radius:999px;padding:13px 22px;font-size:14px;font-weight:500;
-    cursor:pointer;min-height:44px;display:inline-flex;align-items:center;gap:8px;
-    font-family:'Jost',sans-serif;
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    border:none; border-radius:999px; padding:13px 24px; font-size:13px;
+    letter-spacing:.06em; text-transform:uppercase; cursor:pointer; min-height:44px;
   }
-  .btn-primary{background:var(--sage-deep);color:var(--cream);}
-  .btn-secondary{background:transparent;border:1.3px solid var(--sage-deep);color:var(--sage-deep);}
-  .btn-ghost{background:var(--cream-deep);color:var(--ink);}
-  .btn:active{transform:scale(0.98);}
-  .btn svg{width:15px;height:15px;}
+  .btn-primary{background:var(--sage-deep); color:var(--cream); width:100%; margin-top:22px;}
+  .btn-secondary{background:var(--cream-2); color:var(--sage-deep); border:1px solid var(--line);}
+  .btn-small{padding:8px 14px; font-size:11px; min-height:36px;}
 
-  .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;}
+  .save-status{font-size:12px; color:var(--sage); margin-top:10px; text-align:center; opacity:0; transition:opacity .3s;}
+  .save-status.show{opacity:1;}
 
-  .guest-list{margin-top:18px;display:flex;flex-direction:column;gap:8px;}
-  .guest-row{
-    display:flex;align-items:center;justify-content:space-between;gap:10px;
-    background:var(--cream-deep);border-radius:12px;padding:11px 14px;
+  table{width:100%; border-collapse:collapse; margin-top:6px;}
+  th{font-size:10px; letter-spacing:.08em; text-transform:uppercase; text-align:left; color:var(--sage-deep); opacity:.7; padding:8px 6px; border-bottom:1px solid var(--line);}
+  td{padding:10px 6px; border-bottom:1px solid var(--line); font-size:13px; vertical-align:middle;}
+  td.link-cell{font-size:11px; color:var(--sage); word-break:break-all;}
+  .empty-row td{text-align:center; opacity:.5; font-style:italic; padding:20px 0;}
+
+  .preview-link{display:block; text-align:center; margin-top:18px; font-size:13px; color:var(--sage-deep); text-decoration:underline;}
+
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--sage-deep); color:var(--cream); padding:10px 20px; border-radius:999px;
+    font-size:12px; opacity:0; pointer-events:none; transition:all .25s ease;
   }
-  .guest-row .name{font-size:14px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .guest-row button{
-    flex-shrink:0;border:none;background:var(--sage-deep);color:var(--cream);
-    border-radius:999px;padding:8px 14px;font-size:12px;min-height:36px;cursor:pointer;
-  }
-  .guest-row button.copied{background:var(--terracotta);}
-
-  .status-line{
-    margin-top:14px;font-size:12.5px;color:var(--sage);display:none;
-  }
-  .status-line.show{display:block;}
-
-  .hint{font-size:12px;color:#9a9182;margin-top:8px;line-height:1.6;}
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
+
+<header>
+  <h1>Generator Undangan</h1>
+  <p>Atur data acara &amp; bagikan tautan ke tamu</p>
+</header>
+
 <div class="wrap">
-  <header class="topbar">
-    <p class="eyebrow">Konfigurasi &amp; Distribusi</p>
-    <h1>Generator Undangan Aqiqah</h1>
-  </header>
 
-  <!-- Simple password gate (optional, client-side only) -->
-  <div id="gate">
-    <p class="desc" style="text-align:center;">Masukkan kata sandi admin untuk melanjutkan.</p>
-    <input type="password" id="gate-pass" placeholder="Kata sandi" />
-    <br>
-    <button type="button" id="gate-btn">Masuk</button>
-    <p class="err" id="gate-err">Kata sandi salah, silakan coba lagi.</p>
-    <p class="hint">Default: <strong>admin123</strong> — ubah di kode admin.html (variabel ADMIN_PASSWORD) sebelum deploy.</p>
+  <!-- EVENT CONFIG -->
+  <div class="card">
+    <h2>Data Acara</h2>
+
+    <label>Nama Lengkap Anak</label>
+    <input type="text" id="childName" placeholder="Muhammad Arkan">
+
+    <label>Nama Panggilan</label>
+    <input type="text" id="childNickname" placeholder="Arkan">
+
+    <div class="row2">
+      <div>
+        <label>Nama Ayah</label>
+        <input type="text" id="fatherName" placeholder="Ahmad Fauzi">
+      </div>
+      <div>
+        <label>Nama Ibu</label>
+        <input type="text" id="motherName" placeholder="Siti Nurhaliza">
+      </div>
+    </div>
+
+    <label>Tanggal &amp; Waktu Acara</label>
+    <input type="datetime-local" id="eventDate">
+
+    <label>Nama Lokasi</label>
+    <input type="text" id="locationName" placeholder="Kediaman Keluarga">
+
+    <label>Alamat Lengkap</label>
+    <textarea id="locationAddress" placeholder="Jl. Melati No. 12, Jakarta Selatan"></textarea>
+
+    <label>Link Google Maps</label>
+    <input type="url" id="mapsUrl" placeholder="https://maps.google.com/...">
+
+    <label>URL Musik Latar (.mp3)</label>
+    <input type="url" id="audioUrl" placeholder="https://contoh.com/musik.mp3">
   </div>
 
-  <div id="panel">
+  <!-- GUEST LIST -->
+  <div class="card">
+    <h2>Daftar Tamu</h2>
+    <label>Nama Tamu (satu nama per baris, atau pisahkan dengan koma)</label>
+    <textarea id="guestList" placeholder="Budi Santoso&#10;Siti Aminah&#10;Keluarga Bapak Hartono" style="min-height:120px;"></textarea>
 
-    <section class="block">
-      <h2>Data Acara</h2>
-      <p class="desc">Informasi ini akan tampil di seluruh halaman undangan.</p>
+    <label>Alamat Website Undangan (base URL)</label>
+    <input type="text" id="baseUrl" placeholder="https://undangan-anda.com">
 
-      <div class="field"><label>Nama Anak (versi singkat, untuk cover)</label><input id="f-namaDepan" placeholder="Khadija Azzahra"></div>
-      <div class="field"><label>Nama Lengkap Anak</label><input id="f-namaLengkap" placeholder="Khadija Azzahra Putri"></div>
-      <div class="field"><label>Nama Panggilan</label><input id="f-panggilan" placeholder="Dija"></div>
-      <div class="row2">
-        <div class="field"><label>Nama Ayah</label><input id="f-ayah" placeholder="Ahmad Fauzan"></div>
-        <div class="field"><label>Nama Ibu</label><input id="f-ibu" placeholder="Siti Nuraini"></div>
-      </div>
-      <div class="field"><label>Tanggal &amp; Waktu Acara</label><input type="datetime-local" id="f-tanggal"></div>
-      <div class="field"><label>Tampilan Jam (teks bebas)</label><input id="f-waktuText" placeholder="09:00 WIB – Selesai"></div>
-      <div class="field"><label>Lokasi (teks)</label><input id="f-lokasi" placeholder="Jl. Melati No. 8, Bandung"></div>
-      <div class="field"><label>Link Google Maps</label><input id="f-maps" placeholder="https://maps.google.com/..."></div>
-    </section>
+    <button class="btn btn-secondary" id="generateLinksBtn" style="margin-top:18px;">Buat Tautan Tamu</button>
 
-    <section class="block">
-      <h2>Musik Latar</h2>
-      <p class="desc">Tempel URL file audio (.mp3) yang sudah dihosting (boleh dikosongkan).</p>
-      <div class="field"><label>URL Audio</label><input id="f-audio" placeholder="https://contoh.com/musik.mp3"></div>
-    </section>
-
-    <section class="block">
-      <h2>Daftar Tamu</h2>
-      <p class="desc">Satu nama per baris, atau pisahkan dengan koma.</p>
-      <div class="field">
-        <textarea id="f-tamu" placeholder="Budi Santoso&#10;Siti Aminah&#10;Keluarga Bapak Hartono"></textarea>
-      </div>
-      <div class="actions">
-        <button type="button" class="btn btn-primary" id="btn-generate">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          Buat Tautan
-        </button>
-      </div>
-      <div class="guest-list" id="guest-list"></div>
-      <p class="status-line" id="gen-status">Tautan berhasil dibuat untuk semua tamu.</p>
-    </section>
-
-    <section class="block">
-      <h2>Simpan Konfigurasi</h2>
-      <p class="desc">Simpan agar bisa dipakai lagi di browser ini, atau unduh sebagai file untuk dideploy.</p>
-      <div class="actions">
-        <button type="button" class="btn btn-secondary" id="btn-save-local">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M7 3v6h8V3M7 21v-8h10v8"/></svg>
-          Simpan ke Browser
-        </button>
-        <button type="button" class="btn btn-ghost" id="btn-download">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></svg>
-          Unduh config.json
-        </button>
-      </div>
-      <p class="status-line" id="save-status">Tersimpan.</p>
-      <p class="hint">config.json bisa diletakkan di folder proyek dan dimuat manual, atau gunakan tautan tamu di atas (yang sudah membawa data secara otomatis lewat URL) — tidak perlu upload config.json untuk hosting statis sederhana.</p>
-    </section>
-
+    <table id="linksTable">
+      <thead><tr><th>Nama Tamu</th><th>Tautan</th><th></th></tr></thead>
+      <tbody id="linksBody">
+        <tr class="empty-row"><td colspan="3">Belum ada tautan dibuat</td></tr>
+      </tbody>
+    </table>
   </div>
+
+  <button class="btn btn-primary" id="saveBtn">Simpan Konfigurasi</button>
+  <div class="save-status" id="saveStatus">Konfigurasi tersimpan di browser ini</div>
+
+  <div class="card">
+    <h2>Unduh / Pratinjau</h2>
+    <p style="font-size:12px; opacity:.7; margin-top:-6px;">Simpan dulu sebelum mengunduh atau melihat pratinjau.</p>
+    <button class="btn btn-secondary" id="downloadBtn" style="width:100%;">Unduh config.json</button>
+    <a href="index.html" target="_blank" class="preview-link" id="previewLink">Buka pratinjau undangan →</a>
+  </div>
+
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
-const ADMIN_PASSWORD = "admin123"; // ganti sebelum deploy
+(function(){
+  var FIELDS = ['childName','childNickname','fatherName','motherName','locationName','locationAddress','mapsUrl','audioUrl'];
 
-document.getElementById('gate-btn').addEventListener('click', () => {
-  const val = document.getElementById('gate-pass').value;
-  if(val === ADMIN_PASSWORD){
-    document.getElementById('gate').style.display = 'none';
-    document.getElementById('panel').style.display = 'block';
-    loadSavedConfig();
-  } else {
-    document.getElementById('gate-err').style.display = 'block';
-  }
-});
-document.getElementById('gate-pass').addEventListener('keydown', (e)=>{
-  if(e.key === 'Enter') document.getElementById('gate-btn').click();
-});
-
-function collectConfig(){
-  const dt = document.getElementById('f-tanggal').value; // e.g. 2026-10-12T09:00
-  const date = dt ? new Date(dt) : null;
-  const tanggalText = date ? date.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'}) : '';
-  return {
-    namaAnakDepan: document.getElementById('f-namaDepan').value || 'Nama Anak',
-    namaLengkap: document.getElementById('f-namaLengkap').value || 'Nama Lengkap Anak',
-    namaPanggilan: document.getElementById('f-panggilan').value || '',
-    namaAyah: document.getElementById('f-ayah').value || '',
-    namaIbu: document.getElementById('f-ibu').value || '',
-    tanggalISO: dt || '',
-    tanggalText: tanggalText,
-    waktuText: document.getElementById('f-waktuText').value || '',
-    lokasiText: document.getElementById('f-lokasi').value || '',
-    mapsUrl: document.getElementById('f-maps').value || '',
-    audioUrl: document.getElementById('f-audio').value || ''
-  };
-}
-
-function fillFormFromConfig(cfg){
-  if(!cfg) return;
-  document.getElementById('f-namaDepan').value = cfg.namaAnakDepan || '';
-  document.getElementById('f-namaLengkap').value = cfg.namaLengkap || '';
-  document.getElementById('f-panggilan').value = cfg.namaPanggilan || '';
-  document.getElementById('f-ayah').value = cfg.namaAyah || '';
-  document.getElementById('f-ibu').value = cfg.namaIbu || '';
-  document.getElementById('f-tanggal').value = cfg.tanggalISO || '';
-  document.getElementById('f-waktuText').value = cfg.waktuText || '';
-  document.getElementById('f-lokasi').value = cfg.lokasiText || '';
-  document.getElementById('f-maps').value = cfg.mapsUrl || '';
-  document.getElementById('f-audio').value = cfg.audioUrl || '';
-}
-
-function loadSavedConfig(){
-  try{
-    const raw = localStorage.getItem('aqiqahConfig');
-    if(raw) fillFormFromConfig(JSON.parse(raw));
-  }catch(e){}
-}
-
-function encodeConfig(cfg){
-  return btoa(encodeURIComponent(JSON.stringify(cfg)));
-}
-
-function baseUrl(){
-  // points to index.html alongside admin.html
-  return window.location.href.replace(/admin\.html.*$/, 'index.html');
-}
-
-document.getElementById('btn-generate').addEventListener('click', () => {
-  const cfg = collectConfig();
-  const encoded = encodeConfig(cfg);
-  const namesRaw = document.getElementById('f-tamu').value;
-  const names = namesRaw.split(/[\n,]/).map(n => n.trim()).filter(Boolean);
-  const listEl = document.getElementById('guest-list');
-  listEl.innerHTML = '';
-
-  if(names.length === 0){
-    listEl.innerHTML = '<p class="hint">Belum ada nama tamu. Isi daftar tamu di atas lalu klik "Buat Tautan" lagi.</p>';
-    return;
+  function showToast(msg){
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 2000);
   }
 
-  names.forEach(name => {
-    const url = `${baseUrl()}?to=${encodeURIComponent(name.replace(/\s+/g,'+'))}&data=${encoded}`;
-    const row = document.createElement('div');
-    row.className = 'guest-row';
-    row.innerHTML = `<span class="name">${name}</span><button type="button">Copy</button>`;
-    row.querySelector('button').addEventListener('click', (e) => {
-      navigator.clipboard.writeText(url).then(()=>{
-        const b = e.target;
-        b.textContent = 'Tersalin';
-        b.classList.add('copied');
-        setTimeout(()=>{ b.textContent='Copy'; b.classList.remove('copied'); }, 1600);
-      });
-    });
-    listEl.appendChild(row);
+  // ---------- Load existing config ----------
+  function loadConfig(){
+    try{
+      var stored = localStorage.getItem('aqiqah_config');
+      if(stored) return JSON.parse(stored);
+    }catch(e){}
+    return null;
+  }
+  var config = loadConfig();
+  if(config){
+    FIELDS.forEach(function(f){ if(config[f] && document.getElementById(f)) document.getElementById(f).value = config[f]; });
+    if(config.eventDate) document.getElementById('eventDate').value = config.eventDate;
+  }
+  var baseUrl = localStorage.getItem('aqiqah_baseUrl') || (window.location.origin + window.location.pathname.replace('admin.html','') + 'index.html');
+  document.getElementById('baseUrl').value = baseUrl;
+
+  // ---------- Save config ----------
+  function gatherConfig(){
+    var cfg = {};
+    FIELDS.forEach(function(f){ cfg[f] = document.getElementById(f).value.trim(); });
+    cfg.eventDate = document.getElementById('eventDate').value;
+    return cfg;
+  }
+
+  document.getElementById('saveBtn').addEventListener('click', function(){
+    var cfg = gatherConfig();
+    localStorage.setItem('aqiqah_config', JSON.stringify(cfg));
+    localStorage.setItem('aqiqah_baseUrl', document.getElementById('baseUrl').value.trim());
+    var status = document.getElementById('saveStatus');
+    status.classList.add('show');
+    setTimeout(function(){ status.classList.remove('show'); }, 2500);
+    showToast('Konfigurasi tersimpan');
   });
 
-  const status = document.getElementById('gen-status');
-  status.classList.add('show');
-  setTimeout(()=> status.classList.remove('show'), 2500);
-});
+  // ---------- Download config.json ----------
+  document.getElementById('downloadBtn').addEventListener('click', function(){
+    var cfg = gatherConfig();
+    var blob = new Blob([JSON.stringify(cfg, null, 2)], {type:'application/json'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'config.json';
+    a.click();
+  });
 
-document.getElementById('btn-save-local').addEventListener('click', () => {
-  const cfg = collectConfig();
-  localStorage.setItem('aqiqahConfig', JSON.stringify(cfg));
-  const status = document.getElementById('save-status');
-  status.classList.add('show');
-  setTimeout(()=> status.classList.remove('show'), 2200);
-});
+  // ---------- Guest links ----------
+  function slugify(name){
+    return encodeURIComponent(name.trim().replace(/\s+/g,'+'));
+  }
 
-document.getElementById('btn-download').addEventListener('click', () => {
-  const cfg = collectConfig();
-  const blob = new Blob([JSON.stringify(cfg, null, 2)], {type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'config.json';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-});
+  document.getElementById('generateLinksBtn').addEventListener('click', function(){
+    var raw = document.getElementById('guestList').value;
+    var names = raw.split(/[\n,]/).map(function(s){ return s.trim(); }).filter(Boolean);
+    var base = document.getElementById('baseUrl').value.trim().replace(/\/$/,'');
+    var tbody = document.getElementById('linksBody');
+    tbody.innerHTML = '';
+
+    if(names.length === 0){
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="3">Belum ada tautan dibuat</td></tr>';
+      return;
+    }
+
+    names.forEach(function(name){
+      var link = base + '?to=' + slugify(name);
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + name + '</td>' +
+        '<td class="link-cell">' + link + '</td>' +
+        '<td><button class="btn btn-secondary btn-small copy-btn" data-link="' + link + '">Copy</button></td>';
+      tbody.appendChild(tr);
+    });
+
+    localStorage.setItem('aqiqah_baseUrl', base);
+    showToast(names.length + ' tautan dibuat');
+  });
+
+  document.getElementById('linksBody').addEventListener('click', function(e){
+    if(e.target.classList.contains('copy-btn')){
+      var link = e.target.getAttribute('data-link');
+      navigator.clipboard.writeText(link).then(function(){
+        showToast('Tautan disalin');
+      }).catch(function(){
+        showToast('Gagal menyalin, salin manual');
+      });
+    }
+  });
+
+  // ---------- Preview link updates with base url ----------
+  document.getElementById('previewLink').addEventListener('click', function(){
+    // ensure latest config is saved before preview opens
+    var cfg = gatherConfig();
+    localStorage.setItem('aqiqah_config', JSON.stringify(cfg));
+  });
+})();
 </script>
 </body>
 </html>
