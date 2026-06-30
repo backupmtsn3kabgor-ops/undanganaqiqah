@@ -287,7 +287,7 @@
 
   function loadConfig(){
     try{
-      var stored = localStorage.getItem('aqiqah_config');
+      var stored = localStorage.getItem('config');
       if(stored) return Object.assign({}, DEFAULT_CONFIG, JSON.parse(stored));
     }catch(e){}
     return DEFAULT_CONFIG;
