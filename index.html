@@ -53,9 +53,9 @@
   h1,h2,h3,.display{font-family:var(--font-heading); font-weight:700;}
   .arabic{font-family:'Amiri',serif;}
 
-  html{ scroll-behavior:smooth; }
-  body{ scroll-snap-type:y mandatory; }
-  main{ scroll-snap-type:y mandatory; }
+  html{ scroll-behavior:smooth; -webkit-overflow-scrolling:touch; }
+  body{ scroll-snap-type:y proximity; }
+  main{ scroll-snap-type:y proximity; }
 
   #app{max-width:480px;margin:0 auto;position:relative;min-height:100vh;}
 
@@ -112,7 +112,7 @@
   .ornament-floating{ animation: floating 5s ease-in-out infinite; }
 
   /* ---------- SECTIONS ---------- */
-  section{position:relative; padding:64px 8% 56px; scroll-snap-align:start; scroll-snap-stop:always; min-height:92vh; display:flex; flex-direction:column; justify-content:center; overflow:hidden;}
+  section{position:relative; padding:64px 8% 56px; scroll-snap-align:start; scroll-snap-stop:normal; min-height:92vh; display:flex; flex-direction:column; justify-content:center; overflow:hidden;}
   .divider{ display:none; }
 
   .reveal{ opacity:0; transform:translateY(20px); transition: opacity 600ms ease-out, transform 600ms ease-out; will-change:transform,opacity; }
@@ -507,21 +507,58 @@
     }
   });
 
-  // ---------- Open invitation ----------
-  document.getElementById('open-btn').addEventListener('click', function(){
-    document.getElementById('cover').classList.add('opened');
+  // ---------- Open / Close invitation state ----------
+  var coverEl = document.getElementById('cover');
+  var bottomNav = document.getElementById('bottom-nav');
+
+  function showCover(){
+    coverEl.classList.remove('opened');
+    document.body.style.overflow = 'hidden';
+    bottomNav.classList.remove('is-visible');
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    if(config.audioData){
+      audioEl.pause();
+      audioIcon.innerHTML = mutedIcon;
+      audioBtn.classList.add('hidden');
+    }
+  }
+
+  function openInvitation(){
+    coverEl.classList.add('opened');
     document.body.style.overflow = 'auto';
-    document.getElementById('bottom-nav').classList.add('is-visible');
+    bottomNav.classList.add('is-visible');
     if(config.audioData){
       audioBtn.classList.remove('hidden');
       audioEl.play().catch(function(){});
+      audioIcon.innerHTML = unmutedIcon;
     }
     setTimeout(function(){
       document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in'); });
     }, 300);
+  }
+
+  document.getElementById('open-btn').addEventListener('click', function(){
+    openInvitation();
+    // Push a history entry so the browser's Back button (from anywhere on the
+    // page, including the very bottom) returns the user to the cover screen
+    // instead of leaving the page.
+    history.pushState({ aqiqahOpened: true }, '', location.href);
   });
 
   document.body.style.overflow = 'hidden';
+
+  // Ensure there's a base history entry to land back on the cover reliably
+  history.replaceState({ aqiqahOpened: false }, '', location.href);
+
+  window.addEventListener('popstate', function(e){
+    // Whenever we land on a state that isn't "opened" (or has no state at
+    // all), snap back to the cover with the invitation name.
+    if(!e.state || !e.state.aqiqahOpened){
+      showCover();
+    } else {
+      openInvitation();
+    }
+  });
 
   // ---------- Bottom nav: click to scroll + active state ----------
   var navButtons = document.querySelectorAll('#bottom-nav button');
