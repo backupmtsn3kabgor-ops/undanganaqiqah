@@ -245,7 +245,7 @@
 
     <div>
       <div class="cover-eyebrow">Undangan Tasyakuran Aqiqah</div>
-      <div class="cover-baby-name" id="cover-baby-name">Navira Assyifa Mustapa</div>
+      <div class="cover-baby-name" id="cover-baby-name">Naviera Assyifa Mustapa</div>
       <div class="cover-event-date" id="cover-event-date">Sabtu, 04 Juli 2026</div>
     </div>
 
@@ -270,7 +270,7 @@
       <div class="bg-blob" data-speed="0.1" style="width:90px;height:90px;background:var(--turquoise);bottom:10%;right:-20px;"></div>
       <div class="reveal stagger">
         <div class="eyebrow">Assalamu'alaikum Wr. Wb.</div>
-        <div class="section-title">Dengan rahmat Allah yang Maha Kuasa, insha Allah kami akan melangsungkan Tasyakuran aqiqah anak kami </div>
+        <div class="section-title">Dengan rahmat Allah yang Maha Kuasa, insha Allah kami akan melangsungkan Tasyakuran Aqiqah anak kami </div>
         <div class="baby-frame" id="baby-frame">
           <svg viewBox="0 0 100 100" fill="none">
             <path d="M50 28c-12 0-20 9-20 20 0 13 9 22 20 22s20-9 20-22c0-11-8-20-20-20z" fill="#FFEFD6" stroke="#2A1F3D" stroke-width="1"/>
@@ -280,7 +280,7 @@
             <path d="M30 32c4-6 12-9 20-7" stroke="#1FC2BD" stroke-width="1.4" fill="none"/>
           </svg>
         </div>
-        <div class="child-name" id="child-name">Navira Assyifa Mustapa</div>
+        <div class="child-name" id="child-name">Naviera Assyifa Mustapa</div>
         <div class="child-nickname">— Navira —</div>
 
         <div class="verse-box">
@@ -311,9 +311,9 @@
 
         <div class="event-card">
           <div class="event-title">Tasyakuran Aqiqah</div>
-          <div class="event-day reveal" id="event-day">Minggu</div>
-          <div class="event-date reveal" id="event-date">12 Oktober 2025</div>
-          <div class="event-time reveal" id="event-time">09:00 WIB &mdash; Selesai</div>
+          <div class="event-day reveal" id="event-day">Sabtu</div>
+          <div class="event-date reveal" id="event-date">04 Juli 2026</div>
+          <div class="event-time reveal" id="event-time">10:00 WITA &mdash; Selesai</div>
 
           <div class="countdown-grid" id="countdown">
             <div class="cd-box"><div class="num" id="cd-days">00</div><div class="lbl">Hari</div></div>
@@ -373,11 +373,11 @@
   // -> localStorage (set via admin.html on this same browser)
   // -> built-in defaults below.
   var DEFAULT_CONFIG = {
-    childName: "Navira Assyifa Mustapa",
+    childName: "Naviera Assyifa Mustapa",
     childNickname: "Navira",
     fatherName: "Irvan Mustapa",
     motherName: "Sri Hainun Jusuf",
-    eventDate: "2026-07-04T09:00",
+    eventDate: "2026-07-04T10:00",
     locationName: "Rumah Keluarga",
     locationAddress: "Jl. Iloponu",
     mapsUrl: "https://maps.google.com",
@@ -462,7 +462,7 @@
     document.getElementById('cover-event-date').textContent = dayNames[eventDate.getDay()] + ', ' + eventDate.getDate() + ' ' + monthNames[eventDate.getMonth()] + ' ' + eventDate.getFullYear();
     var hh = String(eventDate.getHours()).padStart(2,'0');
     var mm = String(eventDate.getMinutes()).padStart(2,'0');
-    document.getElementById('event-time').textContent = hh + ':' + mm + ' WIB — Selesai';
+    document.getElementById('event-time').textContent = hh + ':' + mm + ' WITA — Selesai';
   }
 
   // ---------- Countdown ----------
