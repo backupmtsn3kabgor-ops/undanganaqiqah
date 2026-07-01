@@ -42,6 +42,7 @@
   .btn-secondary{background:var(--cream-2); color:var(--violet); border:1px solid var(--line);}
   .btn-small{padding:8px 14px; font-size:11px; min-height:36px;}
   .btn-turq{background:var(--turquoise); color:#fff;}
+  .btn-wa{background:#25D366; color:#fff;}
 
   .save-status{font-size:12px; color:var(--turquoise); margin-top:10px; text-align:center; opacity:0; transition:opacity .3s; font-weight:600;}
   .save-status.show{opacity:1;}
@@ -50,6 +51,10 @@
   th{font-size:10px; letter-spacing:.08em; text-transform:uppercase; text-align:left; color:var(--violet); opacity:.8; padding:8px 6px; border-bottom:1px solid var(--line);}
   td{padding:10px 6px; border-bottom:1px solid var(--line); font-size:13px; vertical-align:middle;}
   td.link-cell{font-size:11px; color:var(--turquoise); word-break:break-all;}
+  td.msg-cell{font-size:12px; color:var(--ink); opacity:.75; max-width:220px;}
+  td.msg-cell .msg-preview{display:block; white-space:pre-wrap; max-height:64px; overflow:hidden; position:relative;}
+  td.actions-cell{white-space:nowrap;}
+  td.actions-cell .btn{margin:2px 4px 2px 0;}
   .empty-row td{text-align:center; opacity:.5; font-style:italic; padding:20px 0;}
 
   .preview-link{display:block; text-align:center; margin-top:18px; font-size:13px; color:var(--magenta); text-decoration:underline; font-weight:600;}
@@ -60,6 +65,12 @@
   .file-preview-img{width:64px; height:64px; border-radius:50%; object-fit:cover; border:2px solid var(--sunshine); margin-top:10px;}
   .clear-btn{background:none; border:1px solid var(--line); border-radius:999px; padding:6px 12px; font-size:11px; color:var(--coral); cursor:pointer; min-height:32px;}
   .hint{font-size:11px; color:var(--ink); opacity:.55; margin-top:6px;}
+
+  .placeholder-tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .placeholder-tag{
+    background:var(--cream-2); color:var(--violet); border:1px solid var(--line); border-radius:999px;
+    padding:5px 12px; font-size:11px; font-weight:600; cursor:pointer;
+  }
 
   .toast{
     position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
@@ -145,8 +156,8 @@
   <!-- GUEST LIST -->
   <div class="card">
     <h2>Daftar Tamu</h2>
-    <label>Nama Tamu (satu nama per baris, atau pisahkan dengan koma). Tambahkan kota dengan tanda " | " jika perlu, contoh: Budi Santoso | Bandung</label>
-    <textarea id="guestList" placeholder="Budi Santoso | Bandung&#10;Siti Aminah&#10;Keluarga Bapak Hartono | Jakarta" style="min-height:120px;"></textarea>
+    <label>Nama Tamu (satu nama per baris, atau pisahkan dengan koma). Tambahkan kota dan nomor WhatsApp dengan tanda " | " jika perlu, contoh: Budi Santoso | Bandung | 081234567890</label>
+    <textarea id="guestList" placeholder="Budi Santoso | Bandung | 081234567890&#10;Siti Aminah&#10;Keluarga Bapak Hartono | Jakarta | 082198765432" style="min-height:120px;"></textarea>
 
     <label>Alamat Website Undangan (base URL)</label>
     <input type="text" id="baseUrl" placeholder="https://undangan-anda.com">
@@ -157,6 +168,40 @@
       <thead><tr><th>Nama Tamu</th><th>Tautan</th><th></th></tr></thead>
       <tbody id="linksBody">
         <tr class="empty-row"><td colspan="3">Belum ada tautan dibuat</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- WHATSAPP MESSAGE TEMPLATE -->
+  <div class="card">
+    <h2>Pesan Undangan WhatsApp</h2>
+    <label>Template Kalimat Undangan</label>
+    <textarea id="waTemplate" style="min-height:170px;">Assalamu'alaikum warahmatullahi wabarakatuh,
+
+Bapak/Ibu/Saudara/i {nama} yang kami hormati,
+
+Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud mengundang Bapak/Ibu/Saudara/i untuk hadir dan memberikan doa restu pada acara Aqiqah putra/putri kami.
+
+Berikut kami lampirkan undangan digital kami, mohon kiranya Bapak/Ibu/Saudara/i berkenan membuka tautan berikut untuk melihat detail acara:
+{link}
+
+Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir. Mohon maaf perihal undangan ini kami sampaikan melalui pesan singkat.
+
+Atas perhatian dan doanya, kami ucapkan terima kasih.
+
+Wassalamu'alaikum warahmatullahi wabarakatuh.</textarea>
+    <div class="placeholder-tags">
+      <span class="placeholder-tag" data-insert="{nama}">+ {nama}</span>
+      <span class="placeholder-tag" data-insert="{link}">+ {link}</span>
+    </div>
+    <div class="hint">Gunakan <strong>{nama}</strong> untuk nama tamu dan <strong>{link}</strong> untuk tautan undangan pribadi. Keduanya akan otomatis diganti sesuai Daftar Tamu di atas.</div>
+
+    <button class="btn btn-turq" id="generateWaBtn" style="margin-top:18px;">Buat Pesan WhatsApp</button>
+
+    <table id="waTable">
+      <thead><tr><th>Nama Tamu</th><th>Pesan</th><th></th></tr></thead>
+      <tbody id="waBody">
+        <tr class="empty-row"><td colspan="3">Belum ada pesan dibuat</td></tr>
       </tbody>
     </table>
   </div>
@@ -227,6 +272,9 @@
   var baseUrl = localStorage.getItem('aqiqah_baseUrl') || (window.location.origin + window.location.pathname.replace('admin.html','') + 'index.html');
   document.getElementById('baseUrl').value = baseUrl;
 
+  var storedWaTemplate = localStorage.getItem('aqiqah_waTemplate');
+  if(storedWaTemplate) document.getElementById('waTemplate').value = storedWaTemplate;
+
   // ---------- File uploads ----------
   function readFileAsDataURL(file, cb){
     var reader = new FileReader();
@@ -280,6 +328,7 @@
     try{
       localStorage.setItem('aqiqah_config', JSON.stringify(cfg));
       localStorage.setItem('aqiqah_baseUrl', document.getElementById('baseUrl').value.trim());
+      localStorage.setItem('aqiqah_waTemplate', document.getElementById('waTemplate').value);
       var status = document.getElementById('saveStatus');
       status.classList.add('show');
       setTimeout(function(){ status.classList.remove('show'); }, 2500);
@@ -299,40 +348,59 @@
     a.click();
   });
 
-  // ---------- Guest links ----------
+  // ---------- Guest list parsing (shared by links table & WA messages) ----------
   function slugify(name){
     return encodeURIComponent(name.trim().replace(/\s+/g,'+'));
   }
 
-  document.getElementById('generateLinksBtn').addEventListener('click', function(){
+  function normalizePhone(phone){
+    var digits = phone.replace(/[^\d+]/g,'').replace(/^\+/,'');
+    if(!digits) return '';
+    if(digits.charAt(0) === '0') digits = '62' + digits.slice(1);
+    else if(digits.slice(0,2) !== '62') digits = '62' + digits;
+    return digits;
+  }
+
+  function parseGuestList(){
     var raw = document.getElementById('guestList').value;
-    var lines = raw.split(/[\n,]/).map(function(s){ return s.trim(); }).filter(Boolean);
     var base = document.getElementById('baseUrl').value.trim().replace(/\/$/,'');
+    var lines = raw.split(/[\n,]/).map(function(s){ return s.trim(); }).filter(Boolean);
+    var guests = [];
+    lines.forEach(function(line){
+      var parts = line.split('|').map(function(s){ return s.trim(); });
+      var name = parts[0];
+      if(!name) return;
+      var city = parts[1] || '';
+      var phone = parts[2] ? normalizePhone(parts[2]) : '';
+      var link = base + '?to=' + slugify(name);
+      if(city) link += '&city=' + slugify(city);
+      guests.push({ name:name, city:city, phone:phone, link:link });
+    });
+    return { guests:guests, base:base };
+  }
+
+  // ---------- Guest links table ----------
+  document.getElementById('generateLinksBtn').addEventListener('click', function(){
+    var parsed = parseGuestList();
     var tbody = document.getElementById('linksBody');
     tbody.innerHTML = '';
 
-    if(lines.length === 0){
+    if(parsed.guests.length === 0){
       tbody.innerHTML = '<tr class="empty-row"><td colspan="3">Belum ada tautan dibuat</td></tr>';
       return;
     }
 
-    lines.forEach(function(line){
-      var parts = line.split('|').map(function(s){ return s.trim(); });
-      var name = parts[0];
-      var city = parts[1] || '';
-      if(!name) return;
-      var link = base + '?to=' + slugify(name);
-      if(city) link += '&city=' + slugify(city);
+    parsed.guests.forEach(function(g){
       var tr = document.createElement('tr');
       tr.innerHTML =
-        '<td>' + name + (city ? ' <span style="opacity:.6;font-size:11px;">(' + city + ')</span>' : '') + '</td>' +
-        '<td class="link-cell">' + link + '</td>' +
-        '<td><button class="btn btn-secondary btn-small copy-btn" data-link="' + link + '">Copy</button></td>';
+        '<td>' + g.name + (g.city ? ' <span style="opacity:.6;font-size:11px;">(' + g.city + ')</span>' : '') + '</td>' +
+        '<td class="link-cell">' + g.link + '</td>' +
+        '<td><button class="btn btn-secondary btn-small copy-btn" data-link="' + g.link + '">Copy</button></td>';
       tbody.appendChild(tr);
     });
 
-    localStorage.setItem('aqiqah_baseUrl', base);
-    showToast(lines.length + ' tautan dibuat');
+    localStorage.setItem('aqiqah_baseUrl', parsed.base);
+    showToast(parsed.guests.length + ' tautan dibuat');
   });
 
   document.getElementById('linksBody').addEventListener('click', function(e){
@@ -340,6 +408,75 @@
       var link = e.target.getAttribute('data-link');
       navigator.clipboard.writeText(link).then(function(){
         showToast('Tautan disalin');
+      }).catch(function(){
+        showToast('Gagal menyalin, salin manual');
+      });
+    }
+  });
+
+  // ---------- WhatsApp message template ----------
+  document.querySelectorAll('.placeholder-tag').forEach(function(tag){
+    tag.addEventListener('click', function(){
+      var ta = document.getElementById('waTemplate');
+      var insert = tag.getAttribute('data-insert');
+      var start = ta.selectionStart != null ? ta.selectionStart : ta.value.length;
+      var end = ta.selectionEnd != null ? ta.selectionEnd : ta.value.length;
+      ta.value = ta.value.slice(0, start) + insert + ta.value.slice(end);
+      ta.focus();
+      var pos = start + insert.length;
+      ta.setSelectionRange(pos, pos);
+    });
+  });
+
+  function buildMessage(template, guest){
+    return template.split('{nama}').join(guest.name).split('{link}').join(guest.link);
+  }
+
+  document.getElementById('generateWaBtn').addEventListener('click', function(){
+    var parsed = parseGuestList();
+    var template = document.getElementById('waTemplate').value;
+    var tbody = document.getElementById('waBody');
+    tbody.innerHTML = '';
+
+    if(parsed.guests.length === 0){
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="3">Belum ada pesan dibuat</td></tr>';
+      showToast('Isi Daftar Tamu terlebih dahulu');
+      return;
+    }
+    if(!template.trim()){
+      showToast('Template pesan masih kosong');
+      return;
+    }
+
+    parsed.guests.forEach(function(g){
+      var message = buildMessage(template, g);
+      var encoded = encodeURIComponent(message);
+      var waUrl = g.phone
+        ? 'https://wa.me/' + g.phone + '?text=' + encoded
+        : 'https://api.whatsapp.com/send?text=' + encoded;
+
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + g.name + (g.city ? ' <span style="opacity:.6;font-size:11px;">(' + g.city + ')</span>' : '') +
+          (g.phone ? '' : '<br><span style="opacity:.55;font-size:10px;">no. WA tidak diisi — pilih kontak manual</span>') + '</td>' +
+        '<td class="msg-cell"><span class="msg-preview">' + message.replace(/</g,'&lt;') + '</span></td>' +
+        '<td class="actions-cell">' +
+          '<button class="btn btn-secondary btn-small copy-msg-btn" data-msg="' + encodeURIComponent(message) + '">Copy</button>' +
+          '<a class="btn btn-wa btn-small" href="' + waUrl + '" target="_blank" rel="noopener">Kirim WA</a>' +
+        '</td>';
+      tbody.appendChild(tr);
+    });
+
+    localStorage.setItem('aqiqah_waTemplate', template);
+    localStorage.setItem('aqiqah_baseUrl', parsed.base);
+    showToast(parsed.guests.length + ' pesan dibuat');
+  });
+
+  document.getElementById('waBody').addEventListener('click', function(e){
+    if(e.target.classList.contains('copy-msg-btn')){
+      var msg = decodeURIComponent(e.target.getAttribute('data-msg'));
+      navigator.clipboard.writeText(msg).then(function(){
+        showToast('Pesan disalin');
       }).catch(function(){
         showToast('Gagal menyalin, salin manual');
       });
